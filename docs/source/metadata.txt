@@ -1,0 +1,2 @@
+pages=488
+source=benelli-tnt300-service-manual-.pdf

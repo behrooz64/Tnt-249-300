@@ -15,6 +15,7 @@
 | شاسی | [chassis-fa.md](chassis-fa.md) | فریم، تعلیق، ترمز، فرمان و اتصالات |
 | عیب‌یابی | [troubleshooting-fa.md](troubleshooting-fa.md) | علائم، خطاها و مسیر تشخیص |
 | نمایه قطعات | [parts-index-fa.md](parts-index-fa.md) | پیدا کردن قطعه از روی نام، صفحه و کاربرد |
+| نمایه سریع تعمیرات | [REPAIR-INDEX-fa.md](REPAIR-INDEX-fa.md) | مسیر سریع از علامت/قطعه به تست، مقدار، صفحه و تصویر |
 
 ## قواعد ارجاع
 

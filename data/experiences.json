@@ -1,0 +1,5 @@
+{
+  "version": 1,
+  "status_flow": ["pending", "approved", "rejected"],
+  "experiences": []
+}

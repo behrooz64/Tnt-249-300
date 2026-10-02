@@ -39,7 +39,7 @@ jobs:
                   rest = line.split(":", 1)[1].strip()
                   parts = rest.split(" ")
                   if len(parts) >= 2:
-                      path = parts[0].strip("`")
+                      path = parts[0].replace(chr(96), "")
                       kind = parts[1].strip("()")
                       page_images.setdefault(page, []).append((path, kind))
 

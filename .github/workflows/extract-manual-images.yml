@@ -1,0 +1,131 @@
+name: Extract manual images and diagrams
+
+on:
+  push:
+    paths:
+      - 'benelli-tnt300-service-manual-.pdf'
+      - '.github/workflows/extract-manual-images.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PDF tools
+        run: python -m pip install --upgrade pymupdf
+
+      - name: Extract embedded images and render diagram pages
+        run: |
+          mkdir -p docs/images/embedded docs/images/pages
+          python - <<'PY'
+          import fitz
+          from pathlib import Path
+          import hashlib
+
+          pdf = Path("benelli-tnt300-service-manual-.pdf")
+          embedded = Path("docs/images/embedded")
+          rendered = Path("docs/images/pages")
+          doc = fitz.open(pdf)
+
+          image_count = 0
+          rendered_count = 0
+          seen = set()
+          index = []
+
+          for page_no, page in enumerate(doc, 1):
+              # Extract native raster images embedded in the PDF.
+              for img_no, img in enumerate(page.get_images(full=True), 1):
+                  xref = img[0]
+                  try:
+                      data = doc.extract_image(xref)
+                  except Exception as exc:
+                      print(f"Skip image page={page_no} xref={xref}: {exc}")
+                      continue
+
+                  raw = data["image"]
+                  digest = hashlib.sha1(raw).hexdigest()
+                  if digest in seen:
+                      continue
+                  seen.add(digest)
+
+                  ext = data.get("ext", "png")
+                  filename = embedded / f"page-{page_no:04d}-img-{img_no:02d}.{ext}"
+                  filename.write_bytes(raw)
+                  image_count += 1
+                  index.append({
+                      "type": "embedded",
+                      "page": page_no,
+                      "path": str(filename),
+                      "xref": xref
+                  })
+
+              # Some service-manual diagrams are vector drawings rather than
+              # standalone raster images. Render pages containing images/drawings.
+              has_images = bool(page.get_images(full=True))
+              try:
+                  has_drawings = bool(page.get_drawings())
+              except Exception:
+                  has_drawings = False
+
+              if has_images or has_drawings:
+                  pix = page.get_pixmap(matrix=fitz.Matrix(1.5, 1.5), alpha=False)
+                  filename = rendered / f"page-{page_no:04d}.png"
+                  pix.save(filename)
+                  rendered_count += 1
+                  index.append({
+                      "type": "page-render",
+                      "page": page_no,
+                      "path": str(filename)
+                  })
+
+          lines = [
+              "# Manual image index",
+              "",
+              f"- PDF pages: {len(doc)}",
+              f"- Unique embedded images: {image_count}",
+              f"- Rendered image/diagram pages: {rendered_count}",
+              "",
+              "## Files",
+              ""
+          ]
+          for item in index:
+              lines.append(
+                  f'- Page {item["page"]}: `{item["path"]}` ({item["type"]})'
+              )
+
+          Path("docs/images/index.md").write_text(
+              "\n".join(lines) + "\n",
+              encoding="utf-8"
+          )
+
+          print(f"Extracted {image_count} unique embedded images")
+          print(f"Rendered {rendered_count} pages containing images/drawings")
+          PY
+
+      - name: Commit extracted images
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/images
+          git diff --cached --quiet && exit 0
+          git commit -m "Extract manual images and diagram pages"
+          git push
+
+      - name: Upload image extraction artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: benelli-tnt300-manual-images
+          path: docs/images/
+          retention-days: 90
+          compression-level: 6

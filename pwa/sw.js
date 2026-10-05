@@ -1,4 +1,4 @@
-const CACHE="tnt249-repair-v2";
+const CACHE="tnt249-manual-v3";
 const ASSETS=["./","./index.html","./app.js","./styles.css","./manifest.json","./data/repair-index.json"];
 self.addEventListener("install",event=>{
   event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));

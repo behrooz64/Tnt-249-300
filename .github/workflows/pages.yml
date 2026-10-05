@@ -22,9 +22,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
       - name: Build Pages site
         run: |
@@ -34,7 +33,7 @@ jobs:
           cp -R docs site/docs
           cp -R data site/data
 
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: site
 

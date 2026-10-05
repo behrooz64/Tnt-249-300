@@ -1,77 +1,16 @@
 const $=s=>document.querySelector(s);
-let entries=[];
-
-const norm=s=>String(s||"")
-  .toLowerCase()
-  .replace(/[يى]/g,"ی")
-  .replace(/ك/g,"ک")
-  .replace(/ۀ/g,"ه")
-  .replace(/[\u200c\u200d]/g," ")
-  .replace(/[،؛:؟!.,;:()\[\]{}\/\\]/g," ")
-  .replace(/\s+/g," ")
-  .trim();
-
-function pageLink(p){
-  return "./docs/manual-pages/page-"+String(p).padStart(4,"0")+".md";
-}
-
-function render(list,query=""){
-  const box=$("#results");
-  box.innerHTML="";
-  if(!list.length){
-    box.innerHTML="<div class='empty'>نتیجه‌ای پیدا نشد. عبارت را ساده‌تر کنید یا از کلمات مشکل مثل «استارت»، «ریپ»، «داغ» یا «ترمز» استفاده کنید.</div>";
-  }else{
-    list.forEach(e=>{
-      const pages=[...new Set(e.pages||[])].sort((a,b)=>a-b);
-      const article=document.createElement("article");
-      article.innerHTML=
-        "<h2>"+e.title+"</h2>"+
-        "<div class='tags'>"+(e.keywords||[]).map(k=>"<span>"+k+"</span>").join("")+"</div>"+
-        "<h3>مسیر بررسی</h3><ol>"+(e.steps||[]).map(x=>"<li>"+x+"</li>").join("")+"</ol>"+
-        "<h3>صفحات مرجع</h3><div class='pages'>"+
-        pages.map(p=>"<a target='_blank' rel='noopener' href='"+pageLink(p)+"'>p"+p+"</a>").join(" ")+"</div>";
-      box.appendChild(article);
-    });
-  }
-  $("#status").textContent=query
-    ? (list.length+" مسیر مرتبط پیدا شد.")
-    : (entries.length+" مسیر تعمیراتی آماده است.");
-}
-
-function search(){
-  const q=norm($("#q").value);
-  if(!q){render(entries,"");return;}
-  const terms=q.split(" ").filter(Boolean);
-  const scored=entries.map(e=>{
-    const title=norm(e.title);
-    const keywords=norm((e.keywords||[]).join(" "));
-    const steps=norm((e.steps||[]).join(" "));
-    const hay=title+" "+keywords+" "+steps;
-    let score=0;
-    terms.forEach(t=>{
-      if(title.includes(t)) score+=6;
-      else if(keywords.includes(t)) score+=3;
-      else if(steps.includes(t)) score+=1;
-    });
-    return {...e,score};
-  }).filter(e=>e.score>0).sort((a,b)=>b.score-a.score);
-  render(scored,$("#q").value);
-}
-
-async function init(){
-  try{
-    const r=await fetch("./data/repair-index.json",{cache:"no-store"});
-    if(!r.ok) throw new Error("HTTP "+r.status);
-    const data=await r.json();
-    entries=Array.isArray(data)?data:(data.entries||[]);
-    render(entries,"");
-  }catch(e){
-    $("#status").textContent="خطا در بارگذاری پایگاه تعمیرات: "+e.message;
-    console.error(e);
-  }
-}
-
-$("#q").addEventListener("input",search);
-$("#q").addEventListener("keydown",e=>{if(e.key==="Enter")search();});
-$("#clear").onclick=()=>{$("#q").value="";render(entries,"");$("#q").focus();};
-init();
+let manual=[],repairs=[],specs=[];
+const norm=s=>String(s||"").toLowerCase().replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/ۀ/g,"ه").replace(/[\u200c\u200d]/g," ").replace(/[،؛:؟!.,;:()\[\]{}\/\\]/g," ").replace(/\s+/g," ").trim();
+const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function page(n){return manual.find(x=>x.page===Number(n))}
+function imgPath(p){return "./"+String(p||"").replace(/^\.\//,"")}
+function note(e){return e.notes?'<div class="fa-note">'+esc(e.notes)+'</div>':""}
+function viewer(e){const v=$("#viewer");if(!e){v.classList.add("hidden");return}const imgs=(e.images||[]).filter((x,i,a)=>a.indexOf(x)===i);v.innerHTML='<button class="back" id="closeView">← بستن صفحه</button><h2>صفحه '+e.page+'</h2>'+note(e)+(imgs.length?imgs.map(x=>'<img loading="lazy" src="'+imgPath(x)+'" alt="تصویر صفحه '+e.page+'">').join(""):"")+'<h3>متن اصلی دفترچه</h3><div class="text">'+esc(e.text||"برای این صفحه متن استخراج‌شده‌ای ثبت نشده است.")+'</div>';v.classList.remove("hidden");$("#closeView").onclick=()=>v.classList.add("hidden");v.scrollIntoView({behavior:"smooth",block:"start"})}
+function renderManual(list){const box=$("#results");box.innerHTML="";if(!list.length){box.innerHTML='<div class="empty">نتیجه‌ای پیدا نشد. عبارت را ساده‌تر یا با یک کلمه کلیدی مثل «فرمان»، «استارت»، «ترمز»، «روغن»، «برق» یا «سنسور» امتحان کنید.</div>';return}list.slice(0,60).forEach(e=>{const hay=(e.notes+" "+e.text).trim(),snippet=hay.length>420?hay.slice(0,420)+"…":hay,a=document.createElement("article");a.innerHTML='<h2>دفترچه، صفحه '+e.page+'</h2>'+note(e)+'<div class="snippet">'+esc(snippet)+'</div><div class="card-actions"><button class="primary" data-page="'+e.page+'">دیدن صفحه و تصویر</button></div>';box.appendChild(a)});box.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>viewer(page(b.dataset.page)))}
+function renderRepairs(list){const box=$("#results");box.innerHTML="";if(!list.length){box.innerHTML='<div class="empty">مسیر تعمیراتی مرتبط پیدا نشد.</div>';return}list.slice(0,30).forEach(e=>{const a=document.createElement("article");a.innerHTML='<h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).map(esc).map(x=>'<span>'+x+'</span>').join("")+'</div><h3>مسیر بررسی</h3><ol>'+(e.steps||[]).map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol><div class="pages"><b>صفحات:</b> '+[...new Set(e.pages||[])].map(p=>'<button data-page="'+p+'">p'+p+'</button>').join(" ")+'</div>';box.appendChild(a)});box.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>viewer(page(b.dataset.page)))}
+function score(h,terms){const x=norm(h);let s=0;terms.forEach(t=>{if(x.includes(t))s+=x.indexOf(t)<120?3:1});return s}
+function search(){const q=norm($("#q").value),mode=document.querySelector(".filters .active").dataset.filter;if(!q){renderHome(mode);return}const terms=q.split(" ").filter(Boolean);if(mode==="repair"){const r=repairs.map(e=>({...e,score:score(e.title+" "+(e.keywords||[]).join(" ")+" "+(e.steps||[]).join(" "),terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);renderRepairs(r);$("#status").textContent=r.length+" مسیر تعمیراتی";return}let r=manual.map(e=>({...e,score:score((e.notes||"")+" "+(e.text||"")+" صفحه "+e.page,terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);if(mode==="spec")r=r.filter(e=>/مشخصات|spec|torque|pressure|clearance|oil|mm|nm|psi|ولت|آمپر|مقدار/i.test((e.notes||"")+" "+e.text));renderManual(r);$("#status").textContent=r.length+" صفحه مرتبط"}
+function renderHome(mode){if(mode==="repair")renderRepairs(repairs);else renderManual(manual.slice(0,24));$("#status").textContent=mode==="repair"?repairs.length+" مسیر تعمیراتی آماده است.":manual.length+" صفحه دفترچه آماده است."}
+async function load(url){const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw Error(r.status);return r.json()}
+async function init(){try{const[m,r,s]=await Promise.all([load("./data/manual-index.json"),load("./data/repair-index.json"),load("./data/repair-specs.json")]);manual=m.pages||m;repairs=Array.isArray(r)?r:r.entries||[];specs=Array.isArray(s)?s:s.entries||[];renderHome("manual")}catch(e){$("#status").textContent="خطا در بارگذاری داده‌ها: "+e.message}}
+$("#q").addEventListener("input",search);$("#q").addEventListener("keydown",e=>{if(e.key==="Enter")search()});$("#clear").onclick=()=>{$("#q").value="";search();$("#q").focus()};document.querySelectorAll(".filters button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filters button").forEach(x=>x.classList.remove("active"));b.classList.add("active");search()});init();

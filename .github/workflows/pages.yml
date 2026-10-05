@@ -3,13 +3,16 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: pages
   cancel-in-progress: true
+
 jobs:
   deploy:
     environment:
@@ -18,9 +21,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/configure-pages@v5
+
+      - name: Build Pages site
+        run: |
+          rm -rf site
+          mkdir -p site
+          cp -R pwa/. site/
+          cp -R docs site/docs
+          cp -R data site/data
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: pwa
+          path: site
+
       - id: deployment
         uses: actions/deploy-pages@v4

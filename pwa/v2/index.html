@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>راهنمای تعمیر TNT 249</title><link rel="stylesheet" href="../styles.css?v=v2"></head>
+<body><main>
+<header class="hero"><h1>راهنمای تعمیر Benelli TNT 249</h1><p>نسخه تست مستقیم، بدون Service Worker و بدون app.js خارجی.</p></header>
+<section class="search"><input id="q" type="search" placeholder="مثلاً: استارت، ترمز، روغن، TPS"><button id="clear">پاک کردن</button></section>
+<nav class="filters"><button data-filter="all" class="active">همه</button><button data-filter="repair">تعمیرات</button><button data-filter="manual">دفترچه</button><button data-filter="spec">مشخصات</button></nav>
+<p id="status">در حال بارگذاری...</p><section id="results"></section><section id="viewer" class="viewer hidden"></section>
+<footer><b>هشدار:</b> مرجع اصلی TNT300 است و مقادیر باید با TNT249 تطبیق داده شوند.</footer>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+let manual=[],repairs=[],specs=[];
+const norm=s=>String(s||"").toLowerCase().replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/[\u200c\u200d]/g," ").replace(/[،؛:؟!.,;:()\[\]{}\/\\]/g," ").replace(/\s+/g," ").trim();
+const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const page=n=>manual.find(x=>x.page===Number(n));
+function viewer(e){const v=$("#viewer");const imgs=(e.images||[]).filter((x,i,a)=>a.indexOf(x)===i);v.innerHTML='<button class="back" id="close">← بستن</button><h2>صفحه '+e.page+'</h2>'+(e.notes?'<div class="fa-note">'+esc(e.notes)+'</div>':"")+(imgs.length?imgs.map(x=>'<img loading="lazy" src="../'+String(x).replace(/^\.\//,"")+'" alt="">').join(""):"")+'<h3>متن اصلی دفترچه</h3><div class="text">'+esc(e.text||"متن ثبت نشده")+'</div>';v.classList.remove("hidden");$("#close").onclick=()=>v.classList.add("hidden");v.scrollIntoView({behavior:"smooth"});}
+function render(list){const b=$("#results");b.innerHTML="";list.slice(0,40).forEach(e=>{const a=document.createElement("article");a.innerHTML='<h2>دفترچه، صفحه '+e.page+'</h2>'+(e.notes?'<div class="fa-note">'+esc(e.notes)+'</div>':"")+'<div class="snippet">'+esc((e.notes||"")+" "+(e.text||"")).slice(0,500)+'</div><div class="card-actions"><button class="primary" data-p="'+e.page+'">دیدن صفحه و تصویر</button></div>';b.appendChild(a)});b.querySelectorAll("[data-p]").forEach(x=>x.onclick=()=>viewer(page(x.dataset.p)));}
+async function main(){try{const a=await fetch("../data/manual-index.json?x=v2",{cache:"no-store"});if(!a.ok)throw Error("manual-index "+a.status);const b=await fetch("../data/repair-index.json?x=v2",{cache:"no-store"});const c=await fetch("../data/repair-specs.json?x=v2",{cache:"no-store"});manual=(await a.json()).pages||[];repairs=await b.json();specs=await c.json();render(manual.slice(0,24));$("#status").textContent=manual.length+" صفحه دفترچه آماده است."}catch(e){$("#status").textContent="خطا: "+e.message;console.error(e)}}
+$("#q").oninput=()=>{const q=norm($("#q").value);if(!q){render(manual.slice(0,24));$("#status").textContent=manual.length+" صفحه";return}const terms=q.split(" ");const r=manual.map(e=>({...e,score:terms.reduce((n,t)=>n+(norm((e.notes||"")+" "+(e.text||"")).includes(t)?1:0),0)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);render(r);$("#status").textContent=r.length+" نتیجه";};
+$("#clear").onclick=()=>{$("#q").value="";$("#q").oninput()};
+main();
+</script></body></html>

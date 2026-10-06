@@ -1,9 +1,14 @@
 <!doctype html>
-<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111827"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles.css"><title>راهنمای تعمیر TNT 249</title></head>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#111827"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="styles.css?v=20261006-2"><title>راهنمای تعمیر TNT 249</title></head>
 <body><main>
 <header class="hero"><h1>راهنمای تعمیر Benelli TNT 249</h1><p>جست‌وجو در کل صفحات دفترچه، مسیرهای تعمیر، مشخصات و تصاویر. بالاخره قرار نیست برای پیدا کردن یک پیچ، ۴۸۸ صفحه را ورق بزنیم.</p></header>
 <section class="search"><input id="q" type="search" placeholder="مثلاً: فرمان، استارت، ترمز، روغن، ریپ، TPS"><button id="clear">پاک کردن</button></section>
 <nav class="filters"><button data-filter="all" class="active">همه</button><button data-filter="repair">تعمیرات</button><button data-filter="manual">دفترچه</button><button data-filter="spec">مشخصات</button></nav>
 <p id="status">در حال بارگذاری...</p><section id="results"></section><section id="viewer" class="viewer hidden"></section>
 <footer><b>هشدار منبع:</b> متن اصلی از دفترچه TNT300 است. مقادیر فنی باید با TNT249 تطبیق داده شوند. ترجمه‌های فارسی خلاصه و کاربردی‌اند و جایگزین تأیید قطعه روی موتور نیستند.</footer>
-</main><script src="app.js"></script><script>if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");</script></body></html>
+</main><script src="app.js?v=20261006-2"></script><script>
+if("serviceWorker"in navigator){
+  navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister()));
+  if("caches"in window)caches.keys().then(keys=>keys.forEach(k=>caches.delete(k)));
+}
+</script></body></html>

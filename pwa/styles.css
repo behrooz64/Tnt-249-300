@@ -60,3 +60,8 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
   .search-group .form-control,.search-group #clear{height:46px;font-size:14px}
   .search-group .input-group-text{padding:.55rem .7rem}
 }
+
+.detail-nav{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
+.home-page-btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:1px solid var(--bs-border-color);background:var(--bs-secondary-bg);color:var(--bs-body-color);border-radius:.55rem;padding:.5rem .8rem;font:inherit;cursor:pointer}
+.home-page-btn:hover{background:var(--bs-tertiary-bg)}
+.home-page-btn i{font-size:1rem}

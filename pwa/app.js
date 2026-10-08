@@ -70,13 +70,80 @@ function showManualPage(n){
   setPageHeader("صفحه "+e.page,"دفترچه › صفحه "+e.page);
   window.scrollTo({top:0,behavior:"smooth"});
 }
+function manualTocEntries(){
+  return [
+    ["Section IV Motorcycle",108],["Front Wheel and Front Brake Rotor",109],["Rear Wheel and Rear Brake Rotor",118],
+    ["Front and Rear Brakes",127],["Front and Rear Brakes / Front Brake Pads",129],["Front and Rear Brakes / Rear Brake Pads",130],
+    ["Front and Rear Brakes / Front Brake",131],["Front and Rear Brakes / Front Brake",136],["Front Suspension",142],
+    ["Front Suspension / Front Fork",143],["Front Suspension / Front Shock Absorber",144],["Control",154],
+    ["Control / Control",155],["Control / Handlebar",158],["Rear Shock Absorber",162],["Drive Chain and Rear Swing Arm",166],
+    ["Drive Chain and Rear Swing Arm",167],["Drive Chain and Rear Swing Arm / Rear Swing Arm",170],["Frame",173],
+    ["Frame / Engine Assembly",174],["Frame / Rear License Plate Support",178],["Frame / Side Stand",181],
+    ["Frame / Left Foot Pedal",184],["Frame / Right Foot Pedal",187],["Muffler",190],["Fairing / Cowling Parts",195],
+    ["Fairing / Cowling Parts / Front Fender",197],["Fairing / Cowling Parts / Rear Fender",200],
+    ["Assembly of Fairing / Cowling Parts / Rear Lower Fender and Chain Cover",204],
+    ["Fairing / Cowling Parts / Fuel Tank Cowling and Lower Fairing",207],
+    ["Fairing / Cowling Parts / Tailsection",211],["Fairing / Cowling Parts / Headlight Fairing",216],["Lights",219],
+    ["Lights / Rear Taillight",220],["Lights / Front Turn Signal Light",221],["Lights / Rear Turn Signal Light",222],
+    ["Chapter V Engine",223],["Cylinder Head and Cylinder Head Cover",224],["Exploded View",224],["Technical Parameters",226],
+    ["Special Tools and Sealants",227],["Special Tools and Sealants",228],["Cylinder Head Cover",229],
+    ["Camshaft Timing Chain Tensioner",231],["Camshaft and Camshaft Timing Chain",233],["Cylinder Head",239],["Valves",244],
+    ["Intake Manifolds",255],["Clutch",256],["Breakdown Drawing",256],["Technical Parameters",257],
+    ["Special Tools and Fastening Adhesives",258],["Right Engine Cover",259],["Clutch",261],["Engine Lubrication System",267],
+    ["Breakdown Drawing",267],["Engine Oil Flow Diagram",269],["Technical Parameters",270],["Special Tools and Fastening Adhesives",271],
+    ["Engine Oil and Engine Oil Filter",272],["Oil Pan",273],["Engine Oil Pump",275],["Engine Oil Pressure Relief Valve",277],
+    ["Measurement of Engine Oil Pressure",278],["Engine Oil Pressure Switch",279],["Crankshaft / Transmission",281],
+    ["Breakdown Drawing",281],["Technical Parameters",284],["Special Tools and Fastening Adhesives",287],["Crankcase",288],
+    ["Crankshaft and Connecting Rods",295],["Pistons",308],["Electric Starter",314],["Gear Change Mechanism",318],
+    ["Chapter VI Cooling system",329],["Water Pump",332],["Thermostat",336],["Coolant Hose Connectors",338],
+    ["Disassemble the Radiator",340],["Dismantle the Radiator",342],["Radiator",343],["Fan",344],["Radiator Cap",346],
+    ["Water Temperature Sensor",347],["Radiator Assembly",348],["Cooling Liquid Filling",349],["Chapter VII Fuel System",350],
+    ["Fuel System",351],["Fuel Tank",352],["Fuel Pump",358],["Operating Principles of the Fuel Pump",358],
+    ["Fuel Pump Appearance",358],["Fuel Pump Composition",359],["Tag and Identification Label of the Fuel Pump",359],
+    ["Working Environment of the Fuel Pump",360],["Fuel Pump Maintenance Procedure",361],["Operation Precautions",364],
+    ["Throttle Body",365],["Operating Principles of the Throttle Body",365],["Appearance of the Throttle Body",365],
+    ["Technical Parameters",366],["Working Environment of the Throttle Body",366],["Disassembly of the Throttle Body",366],
+    ["Negative Pressure Balance of the Throttle Body",367],["Throttle Body Cleaning Method",367],["Assembly of the Throttle Body",367],
+    ["Installation Cautions for the Throttle Body",367],["Operation Cautions for the Throttle Body",367],["Fuel Injectors",368],
+    ["Operating Principles of the Fuel Injectors",368],["Appearance of the Fuel Injectors",368],["Sealing O-ring of the Fuel Injectors",369],
+    ["Overvoltage Effects of the Fuel Injectors",370],["Temperature Range of the Fuel Injectors",370],["Fuel Pollutants of the Fuel Injectors",370],
+    ["Wiring Harness Layout of the Fuel Injectors",370],["Operation Cautions for the Fuel Injectors",371],
+    ["Installation Requirements for the Fuel Injectors",372],["Fuel Injector Replacement Method",372],["Fuel Injector Selection",372],
+    ["Blockage of Fuel Injectors",373],["Chapter VIII Electrical System",374],["Charging System",375],["Battery",376],
+    ["Stator / Generator",381],["Regulator / Rectifier",386],["Ignition System",388],["Ignition Coil",389],
+    ["Crankshaft Position Sensor",397],["ECU",398],["Spark Plugs",399],["Ignition System Troubleshooting",401],
+    ["Starting System",402],["Starter Motor",403],["Starter Relay",408],["Gauge Cluster",411],["Gauge Cluster Disassembly",411],
+    ["Gauge Cluster and Indicator Lights",411],["Ignition Switch Disassembly",414],["Ignition Switch Inspection",414],["Horn",415],
+    ["Disassembly",415],["Inspection",415],["Handlebar Switch (Chinese Market)",416],["Handlebar Switch (US-STANDARD)",417],
+    ["Speedometer Sensor",418],["Disassembly of the Speedometer Sensor",418],["Check of the Speedometer Sensor",418],
+    ["Speedometer Sensor Assembly",418],["Relay and Fuse-Block",419],["Relays",419],["Fuse-Block",421],["Fuel Injection System",422],
+    ["Fuel Injection System / ECU",423],["Fuel Injection System / Water Temperature Sensor",429],
+    ["Fuel Injection System / Intake Air Temperature Sensor",430],["Fuel Injection System / Intake Manifold Pressure Sensor",432],
+    ["Fuel Injection System / Oxygen Sensor",434],["Fuel Injection System / Idle Speed Stepper Motor",436],
+    ["Fuel Injection System / ECP",438],["Chapter IX Faults and Troubleshooting",440],
+    ["Difficulty in Starting or Starting Failure",441],["Poor Running (Especial at low speed)",442],["Poor Running (High speed)",443],
+    ["Charging Defect (Over Discharging or Over Charging of the Battery Voltage)",444],["No Spark Diagnosis",445],
+    ["Diagnosis Breakdown Maintenance of the Fuel Injection System",446],
+    ["Directly Use The Fault Indicating Light Flashing Diagnosis (FI) on the Instrument",447],
+    ["Using Diagnostic Apparatus for Fault Diagnosis",450],["Check the Faults With Diagnostic Software PCHUD",451],
+    ["Common Trouble Shooting Methods of the Fuel Injection System",459],["Repair Kit",459],
+    ["Engine Working Data Flow Indicated on the Diagnostic Apparatus",460],["Simple Troubleshooting Methods",460],
+    ["Chapter X Appendices",464],["Wire Wrapping Method of the Cables, Wires and Hoses",465],
+    ["TNT300 Circuit Diagram (Chinese Market)",486],["TNT300 Circuit Diagram (EURO-STANDARD)",487]
+  ];
+}
 function showManualDirectory(lang){
   const fa=lang==="fa", box=$("#results");
   $("#detail").classList.add("hidden"); $("#pdfViewer").classList.add("hidden"); box.classList.remove("hidden");
   document.querySelectorAll(".filters-btn").forEach(x=>x.classList.remove("active"));
   document.querySelectorAll(".manual-lang-btn").forEach(x=>x.classList.toggle("active",x.dataset.manualLang===lang));
-  const pages=uniquePages(manual.map(x=>x.page));
-  box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><div class="eyebrow">'+(fa?"نسخه فارسی":"نسخه اصلی")+'</div><h2>'+(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی")+'</h2><p>'+(fa?"صفحات با توضیحات فارسی و تصاویر.":"صفحات اصلی دفترچه.")+'</p></div><span class="manual-count">'+pages.length+' صفحه</span></div><div class="manual-page-grid">'+pages.map(p=>'<button class="manual-page-item" data-manual-page="'+p+'" data-manual-lang="'+lang+'">صفحه '+p+' <i class="bi bi-chevron-left"></i></button>').join("")+'</div></div>';
+  if(fa){
+    const pages=uniquePages(manual.map(x=>x.page));
+    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><div class="eyebrow">نسخه فارسی</div><h2>راهنمای کامل فارسی</h2><p>صفحات با توضیحات فارسی و تصاویر.</p></div><span class="manual-count">'+pages.length+' صفحه</span></div><div class="manual-page-grid">'+pages.map(p=>'<button class="manual-page-item" data-manual-page="'+p+'" data-manual-lang="fa">صفحه '+p+' <i class="bi bi-chevron-left"></i></button>').join("")+'</div></div>';
+  }else{
+    const entries=manualTocEntries();
+    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><div class="eyebrow">نسخه اصلی</div><h2>فهرست راهنمای کامل انگلیسی</h2><p>فهرست مطالب دقیقاً بر اساس صفحات فهرست PDF، با لینک مستقیم به صفحه مربوطه.</p></div><span class="manual-count">'+entries.length+' بخش</span></div><div class="manual-toc-list">'+entries.map(([title,p])=>'<button class="manual-toc-item" data-manual-page="'+p+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+p+'</strong></button>').join("")+'</div></div>';
+  }
   box.querySelectorAll("[data-manual-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.manualPage,b.dataset.manualLang));
   setPageHeader(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی",fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی");
   window.scrollTo({top:0,behavior:"smooth"});

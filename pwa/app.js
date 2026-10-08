@@ -72,7 +72,7 @@ function showManualPage(n){
 }
 function manualTocEntries(){
   return [
-    ["Preface",2],["Important Information in This Maintenance Manual",3],["User Guide",4],["Exhaust Emission Control Information",5],["Symbols",6],["Specific Symbols",6],["Symbol Interpretation",7],
+    ["Preface",1],["Important Information in This Maintenance Manual",2],["User Guide",3],["Exhaust Emission Control Information",4],["Symbols",6],["Specific Symbols",6],["Symbol Interpretation",7],
     ["Content",8],["Contents",9],["Contents",10],["Contents",11],["Contents",12],["Contents",13],["Contents",14],
     ["Chapter I General Information",15],["General Safety",16],["Identification",17],["Motorcycle Identification",17],["Important Parts",18],
     ["Features",19],["Instruments and Lights",19],["Important Information",21],["Preparation for Disassembly and Disassembling Operation",21],

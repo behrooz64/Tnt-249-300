@@ -28,15 +28,28 @@ function page(n){return manual.find(x=>x.page===Number(n))}
 function imgPath(p){const s=String(p||"").trim();if(/^https?:\/\//i.test(s))return s;return "./"+s.replace(/^\.\//,"")}
 function uniquePages(pages){return [...new Set((pages||[]).map(Number).filter(Boolean))].sort((a,b)=>a-b)}
 function uiPageNumber(n){return String(n).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹"[Number(d)])}
+function manualPageNumber(n){
+  const p=Number(n);
+  if(!p)return "";
+  return p===1?"جلد":uiPageNumber(p-1);
+}
+function manualPageLabel(n){
+  const p=Number(n);
+  if(!p)return "";
+  return p===1?"جلد":"صفحه دفترچه "+manualPageNumber(p);
+}
+function pdfLabel(n){
+  return "صفحه PDF "+uiPageNumber(n);
+}
 function showPDF(n){
   const p=Number(n),v=$("#pdfViewer"); if(!p)return;
   const pad=String(p).padStart(4,"0"),img="./docs/images/pages/page-"+pad+".png";
-  v.innerHTML='<div class="pdf-top"><button id="closePdf">← بستن</button><span>صفحه '+uiPageNumber(p)+'</span></div><img class="pdf-page" src="'+img+'" alt="صفحه اصلی PDF '+p+'">';
+  v.innerHTML='<div class="pdf-top"><button id="closePdf">← بستن</button><span>'+pdfLabel(p)+' · '+manualPageLabel(p)+'</span></div><img class="pdf-page" src="'+img+'" alt="'+pdfLabel(p)+'">';
   v.classList.remove("hidden"); document.body.classList.add("modal-open");
   $("#closePdf").onclick=closePDF; v.scrollIntoView({behavior:"smooth",block:"start"});
 }
 function closePDF(){$("#pdfViewer").classList.add("hidden");document.body.classList.remove("modal-open")}
-function pdfButtons(pages){return uniquePages(pages).map(p=>'<button class="pdf-btn" data-pdf="'+p+'">مشاهده صفحه PDF اصلی · '+uiPageNumber(p)+'</button>').join("")}
+function pdfButtons(pages){return uniquePages(pages).map(p=>'<button class="pdf-btn" data-pdf="'+p+'">'+pdfLabel(p)+' · '+manualPageLabel(p)+'</button>').join("")}
 function bindPDF(){document.querySelectorAll("[data-pdf]").forEach(b=>b.onclick=()=>showPDF(b.dataset.pdf));document.querySelectorAll("[data-home]").forEach(b=>b.onclick=goHome)}
 function renderCategories(){
   const groups=[
@@ -58,14 +71,14 @@ function renderCategories(){
 }
 const repairStepPages={"no-start":[[376,377,378],[408],[403,404,405,406,407],[486,487]],"crank-no-start":[[399,400,401],[358,359,360,361,362,363,364],[397],[368,369,370,371,372,373],[424,425,426,427,428]],"rough-low-rpm":[[440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463],[399,400,401],[358,359,360,361,362,363,364,365],[365,366,367,368],[365,366,367,368],[368,369,370,371,372,373],[397,424,425,426,427,428,430,431,433,435,437,440]],"fuel-pressure":[[353,354,355,356,357,358,359,360,361,362,363,364,365],[364],[358,359,360,361,362,363,364],[353,354,355,356,357,364,365]],"throttle-tps-idle":[[365,366,367,368],[366,367,368],[368,420],[365,366,367,368,420]],"injector":[[368,369],[369,370,371],[369,370,371,372,373],[373]],"overheat":[[332,333,334,335,336],[336,337,338],[340,341,342,343,344],[345,346],[347],[348],[349]],"oil-pressure":[[272],[273],[275],[277],[278],[279]],"valve-compression":[[72],[240],[250],[254]],"battery-charging":[[376,377,378],[381,382,383,384,385],[386,387,388,389],[486,487]],"sensors-efi":[[397],[424,425,426,427,428],[433],[348],[435],[424,425,426,427,428],[437,440]],"dtc":[[440],[441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463],[440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463],[440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463],[440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463],[440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463]],"brakes":[[76],[78],[83],[84],[76,78,83,84]],"chain-chassis":[[85,86],[87,88,89,90],[91],[92],[93],[173,174,181,182,183,184,185,186,187]]};
 function repairPageButtons(pages){
-  return uniquePages(pages).map(p=>'<button class="page-chip" data-pdf="'+p+'">صفحه PDF اصلی · '+uiPageNumber(p)+'</button>').join("");
+  return uniquePages(pages).map(p=>'<button class="page-chip" data-pdf="'+p+'">'+pdfLabel(p)+' · '+manualPageLabel(p)+'</button>').join("");
 }
 function showRepair(id){
   const e=repairs.find(x=>x.id===id);if(!e)return;
   const groups=repairStepPages[e.id]||[];
   const steps=(e.steps||[]).map((s,i)=>{
     const pages=groups[i]||[];
-    return '<article class="repair-step-card"><div class="repair-step-title"><span class="repair-step-num">'+(i+1)+'</span><h4>'+esc(s)+'</h4></div><p class="repair-step-note">توضیحات فارسی و صفحه مرجع این بخش از دفترچه:</p><div class="repair-step-actions">'+uniquePages(pages).map(p=>'<button class="pdf-btn" data-manual-page="'+p+'" data-manual-lang="fa">توضیحات فارسی</button><button class="pdf-btn" data-pdf="'+p+'">صفحه PDF اصلی · '+uiPageNumber(p)+'</button>').join("")+'</div></article>';
+    return '<article class="repair-step-card"><div class="repair-step-title"><span class="repair-step-num">'+(i+1)+'</span><h4>'+esc(s)+'</h4></div><p class="repair-step-note">توضیحات فارسی و صفحه مرجع این بخش از دفترچه:</p><div class="repair-step-actions">'+uniquePages(pages).map(p=>'<button class="pdf-btn" data-manual-page="'+p+'" data-manual-lang="fa">توضیحات فارسی · '+manualPageLabel(p)+'</button><button class="pdf-btn" data-pdf="'+p+'">'+pdfLabel(p)+' · '+manualPageLabel(p)+'</button>').join("")+'</div></article>';
   }).join("");
   $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت به موضوعات</button></div><div class="detail-head"><div class="eyebrow">موضوع تعمیر</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div></div><section><h3>مسیر بررسی</h3><div class="repair-steps">'+steps+'</div></section><section><h3>همه صفحات مرتبط</h3><div class="page-list">'+repairPageButtons(e.pages)+'</div></section>';
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;
@@ -77,9 +90,9 @@ function showRepair(id){
 function closeDetail(){$("#detail").classList.add("hidden");$("#results").classList.remove("hidden");renderHome("home");setPageHeader("راهنمای تعمیر Benelli TNT 249","خانه")}
 function showManualPage(n){
   const e=page(n);if(!e)return;
-  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>صفحه '+uiPageNumber(e.page)+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl" style="text-align:right;line-height:2">'+formatPersianNotes(e.notes)+'</div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3>'+pdfButtons([e.page])+'</section>';
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>'+manualPageLabel(e.page)+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl" style="text-align:right;line-height:2">'+formatPersianNotes(e.notes)+'</div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3>'+pdfButtons([e.page])+'</section>';
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();
-  setPageHeader("صفحه "+e.page,"دفترچه › صفحه "+e.page);
+  setPageHeader(manualPageLabel(e.page),"دفترچه › "+manualPageLabel(e.page));
   window.scrollTo({top:0,behavior:"smooth"});
 }
 function manualTocEntries(){
@@ -268,10 +281,10 @@ function showManualDirectory(lang){
       "TNT300 Circuit Diagram (Chinese Market)":"نقشه مدار TNT300 (بازار چین)","TNT300 Circuit Diagram (EURO-STANDARD)":"نقشه مدار TNT300 (استاندارد اروپا)"
     };
     const entries=manualTocEntries();
-    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>راهنمای کامل فارسی</h2></div><span class="manual-count">'+entries.length+' مورد</span></div><div class="manual-toc-list">'+entries.map(e=>{const pdfPage=Number(e[1])+1;return '<button class="manual-toc-item" style="direction:rtl;grid-template-columns:auto 1fr;text-align:right" data-manual-page="'+pdfPage+'" data-manual-lang="fa"><strong>'+pdfPage+'</strong><span>'+esc(titleMap[e[0]]||e[0])+'</span></button>'}).join("")+'</div></div>';
+    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>راهنمای کامل فارسی</h2></div><span class="manual-count">'+entries.length+' مورد</span></div><div class="manual-toc-list">'+entries.map(e=>{const pdfPage=Number(e[1])+1;return '<button class="manual-toc-item" style="direction:rtl;grid-template-columns:auto 1fr;text-align:right" data-manual-page="'+pdfPage+'" data-manual-lang="fa"><strong>'+uiPageNumber(Number(e[1]))+'</strong><span>'+esc(titleMap[e[0]]||e[0])+'</span></button>'}).join("")+'</div></div>';
   }else{
     const entries=manualTocEntries();
-    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>فهرست راهنمای کامل انگلیسی</h2></div></div><div class="manual-toc-list">'+entries.map(e=>{const title=e[0],p=Number(e[1])+1;return '<button class="manual-toc-item" data-manual-page="'+p+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+p+'</strong></button>'}).join("")+'</div></div>';
+    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>فهرست راهنمای کامل انگلیسی</h2></div></div><div class="manual-toc-list">'+entries.map(e=>{const title=e[0],p=Number(e[1])+1;return '<button class="manual-toc-item" data-manual-page="'+p+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+uiPageNumber(Number(e[1]))+'</strong></button>'}).join("")+'</div></div>';
   }
   box.querySelectorAll("[data-manual-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.manualPage,b.dataset.manualLang));
   setPageHeader(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی",fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی");
@@ -320,12 +333,12 @@ async function showManualPage(n,lang){
   const notes=notesMatch?notesMatch[1].trim():"";
   const image="./docs/images/pages/page-"+pad+".png";
   const body=fa
-    ? '<section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl">'+formatPersianNotes(notes)+'</div></section><section><h3>تصویر صفحه</h3><div class="manual-images"><img class="manual-page-image" src="'+image+'" alt="صفحه '+p+'" loading="lazy"></div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3><button class="pdf-btn" data-pdf="'+p+'">مشاهده صفحه PDF اصلی · '+p+'</button></section>'
-    : '<section><h3>صفحه اصلی دفترچه</h3><div class="manual-images"><img class="manual-page-image" src="'+image+'" alt="صفحه '+p+'" loading="lazy"></div></section>';
-  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backManual">← بازگشت</button></div><div class="detail-head"><div class="eyebrow">'+(fa?"راهنمای فارسی":"راهنمای انگلیسی")+'</div><h2>صفحه '+uiPageNumber(p)+'</h2></div>'+body;
+    ? '<section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl">'+formatPersianNotes(notes)+'</div></section><section><h3>تصویر صفحه</h3><div class="manual-images"><img class="manual-page-image" src="'+image+'" alt="'+manualPageLabel(p)+'" loading="lazy"></div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3><button class="pdf-btn" data-pdf="'+p+'">مشاهده '+pdfLabel(p)+' · '+manualPageLabel(p)+'</button></section>'
+    : '<section><h3>'+manualPageLabel(p)+'</h3><div class="manual-images"><img class="manual-page-image" src="'+image+'" alt="'+manualPageLabel(p)+'" loading="lazy"></div></section>';
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backManual">← بازگشت</button></div><div class="detail-head"><div class="eyebrow">'+(fa?"راهنمای فارسی":"راهنمای انگلیسی")+'</div><h2>'+manualPageLabel(p)+'</h2></div>'+body;
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");
   $("#backManual").onclick=()=>showManualDirectory(lang);
-  bindPDF();setPageHeader("صفحه "+uiPageNumber(p),(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی")+" › صفحه "+uiPageNumber(p));
+  bindPDF();setPageHeader(manualPageLabel(p),(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی")+" › "+manualPageLabel(p));
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -350,7 +363,7 @@ function renderRepairResults(list){
 function renderManualResults(list){
   const box=$("#results");$("#detail").classList.add("hidden");box.classList.remove("hidden");
   if(!list.length){box.innerHTML='<div class="empty">نتیجه‌ای پیدا نشد.</div>';return}
-  box.innerHTML='<div class="section-title"><h2>نتایج صفحات دفترچه</h2><p>ابتدا صفحه را انتخاب کن؛ متن کامل اینجا نمایش داده نمی‌شود.</p></div>'+list.slice(0,60).map(e=>'<article class="result-card"><div class="eyebrow">دفترچه</div><h2>صفحه '+e.page+'</h2><p class="result-title">'+esc(e.notes?e.notes.split("\n")[0]:"صفحه دفترچه")+'</p><button class="primary" data-page="'+e.page+'">مشاهده موضوع</button></article>').join("");
+  box.innerHTML='<div class="section-title"><h2>نتایج صفحات دفترچه</h2><p>ابتدا صفحه را انتخاب کن؛ متن کامل اینجا نمایش داده نمی‌شود.</p></div>'+list.slice(0,60).map(e=>'<article class="result-card"><div class="eyebrow">دفترچه</div><h2>'+manualPageLabel(e.page)+'</h2><p class="result-title">'+esc(e.notes?e.notes.split("\n")[0]:"صفحه دفترچه")+'</p><button class="primary" data-page="'+e.page+'">مشاهده موضوع</button></article>').join("");
   box.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.page));
 }
 function renderHome(mode){

@@ -386,8 +386,8 @@ function search(pushHistory=false){
     if(pushHistory) pushViewState({view:"home",mode});
     return
   }
-  if(pushHistory || history.state?.view!=="search") pushViewState({view:"search",q,mode});
-  else replaceViewState({view:"search",q,mode});
+  if(history.state?.view==="search") replaceViewState({view:"search",q,mode});
+  else pushViewState({view:"search",q,mode});
   const terms=q.split(" ").filter(Boolean);
   if(mode==="repair"||mode==="home"){
     const r=repairs.map(e=>({...e,score:score(e.title+" "+(e.keywords||[]).join(" ")+" "+(e.steps||[]).join(" "),terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);

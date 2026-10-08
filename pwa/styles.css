@@ -1,1 +1,45 @@
-*{box-sizing:border-box}.hidden{display:none!important}html{scroll-behavior:smooth}body{margin:0;background:#f2f4f7;color:#172033;font-family:system-ui,-apple-system,Segoe UI,Tahoma,sans-serif;line-height:1.8}body.modal-open{overflow:hidden}main{max-width:1040px;margin:auto;padding:14px}.hero,.search,.filters,.category,.result-card,.detail,footer{background:#fff;border:1px solid #e1e5ea;border-radius:18px;padding:18px;margin-bottom:14px}.hero{padding:24px}.hero h1{margin:0 0 7px;font-size:1.6rem}.hero p{margin:0;color:#596273}.eyebrow{font-size:.78rem;color:#6b7280;margin-bottom:3px}.search{display:flex;gap:8px;position:sticky;top:6px;z-index:8;box-shadow:0 3px 14px #0000000d}.search input{flex:1;min-width:0;padding:13px;border:1px solid #cbd2dc;border-radius:11px;font-size:1rem;direction:rtl}.search button,.filters button,.back,.primary,.pdf-btn,.page-chip{border:0;border-radius:10px;padding:10px 13px;cursor:pointer}.search button,.filters button,.back,.page-chip{background:#e9edf2}.filters{display:flex;gap:7px;overflow:auto}.filters .active,.primary{background:#172033;color:#fff}.section-title{padding:4px 4px 8px}.section-title h2{margin:0}.section-title p{margin:2px 0;color:#687386}.category h2{margin:0 0 12px}.topic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.topic-card{border:1px solid #dfe4ea;background:#f9fafb;border-radius:14px;padding:15px;text-align:right;cursor:pointer;min-height:86px}.topic-card span{display:block;font-weight:700;font-size:1rem}.topic-card small{display:block;color:#6b7280;margin-top:4px}.result-card h2{margin:2px 0 7px}.result-title{color:#596273}.tags span{display:inline-block;padding:3px 8px;margin:2px;background:#eef2f7;border-radius:999px;font-size:.78rem}.result-meta{color:#596273;font-size:.9rem;margin:10px 0}.detail h2{margin:2px 0 10px}.detail section{border-top:1px solid #edf0f3;padding-top:12px;margin-top:14px}.detail ol{padding-right:22px}.page-list{display:flex;flex-wrap:wrap;gap:6px}.pdf-link{background:#fafbfc;border-radius:14px;padding:12px}.pdf-btn{background:#172033;color:#fff;width:100%;text-align:center;font-size:.95rem}.pdf-viewer{position:fixed;inset:0;background:#111;z-index:100;overflow:auto;padding:8px}.pdf-top{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;background:#111;color:#fff;padding:8px 2px}.pdf-top button{border:0;border-radius:9px;padding:8px 12px;cursor:pointer}.pdf-page{display:block;max-width:100%;height:auto;margin:8px auto 30px;object-fit:contain}.empty{padding:24px;text-align:center;background:#fff;border-radius:14px}footer{font-size:.85rem;color:#596273}
+/* TNT 249 - AdminLTE 4 home UI layer */
+html{scroll-behavior:smooth}
+body{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
+.hidden{display:none!important}
+.app-main{min-height:calc(100vh - 7rem)}
+.app-brand-text{font-size:1rem}
+.sidebar-menu .nav-link{border:0;background:transparent;color:rgba(255,255,255,.8)}
+.sidebar-menu .nav-link:hover,.sidebar-menu .nav-link.active{color:#fff;background:rgba(255,255,255,.12)}
+.sidebar-menu .nav-link p{display:inline-block;margin:0}
+#status{min-height:1.5rem}
+.section-title{margin-bottom:1rem}
+.section-title h2{font-size:1.25rem;margin:0 0 .25rem}
+.section-title p{margin:0;color:var(--bs-secondary-color)}
+.category{margin-bottom:1rem}
+.category h2{font-size:1.05rem;margin:0 0 .75rem}
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.75rem}
+.topic-card{width:100%;border:1px solid var(--bs-border-color);background:var(--bs-body-bg);border-radius:.75rem;padding:1rem;text-align:right;cursor:pointer;min-height:92px;transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;color:var(--bs-body-color)}
+.topic-card:hover{transform:translateY(-1px);box-shadow:0 .25rem .8rem rgba(0,0,0,.08);border-color:rgba(var(--bs-primary-rgb),.45)}
+.topic-card span{display:block;font-weight:700;font-size:1rem}
+.topic-card small{display:block;color:var(--bs-secondary-color);margin-top:.3rem}
+.result-card,.detail{background:var(--bs-body-bg);border:1px solid var(--bs-border-color);border-radius:.75rem;padding:1rem;margin-bottom:1rem}
+.result-card h2,.detail h2{font-size:1.2rem}
+.result-title{color:var(--bs-secondary-color)}
+.tags span{display:inline-block;padding:.2rem .5rem;margin:.15rem;background:var(--bs-secondary-bg);border-radius:999px;font-size:.78rem}
+.result-meta{color:var(--bs-secondary-color);font-size:.9rem;margin:.6rem 0}
+.page-list{display:flex;flex-wrap:wrap;gap:.4rem}
+.page-chip{border:0;border-radius:.5rem;padding:.5rem .7rem;background:var(--bs-secondary-bg);color:var(--bs-body-color);cursor:pointer}
+.pdf-viewer{position:fixed;inset:0;background:#111;z-index:2000;overflow:auto;padding:.5rem}
+.pdf-top{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;background:#111;color:#fff;padding:.5rem}
+.pdf-top button{border:0;border-radius:.5rem;padding:.5rem .75rem;cursor:pointer}
+.pdf-page{display:block;max-width:100%;height:auto;margin:.5rem auto 2rem}
+.empty{padding:2rem;text-align:center;background:var(--bs-body-bg);border-radius:.75rem}
+.pdf-link{border-top:1px solid var(--bs-border-color);padding-top:1rem;margin-top:1rem}
+.pdf-btn{display:block;width:100%;border:0;border-radius:.5rem;padding:.65rem .8rem;margin:.4rem 0;background:var(--bs-primary);color:#fff;cursor:pointer}
+.app-footer{font-size:.85rem}
+@media (max-width:575.98px){
+  .app-content-header{padding-top:.8rem}
+  .topic-grid{grid-template-columns:1fr 1fr}
+  .topic-card{min-height:88px;padding:.8rem}
+  .topic-card span{font-size:.9rem}
+  .app-content{padding-left:.5rem;padding-right:.5rem}
+}
+@media (max-width:380px){
+  .topic-grid{grid-template-columns:1fr}
+}

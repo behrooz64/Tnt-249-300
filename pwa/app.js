@@ -1,4 +1,14 @@
 const $=s=>document.querySelector(s);
+function setPageHeader(title="صفحه اصلی", section="خانه"){
+  const titleEl=document.querySelector("#pageTitle");
+  const crumbEl=document.querySelector("#pageBreadcrumb");
+  const contentTitle=document.querySelector("#contentPageTitle");
+  const contentCrumb=document.querySelector("#contentPageBreadcrumb");
+  if(titleEl) titleEl.textContent=title;
+  if(crumbEl) crumbEl.textContent=section;
+  if(contentTitle) contentTitle.textContent=title;
+  if(contentCrumb) contentCrumb.textContent=section;
+}
 function goHome(){
   const q=$("#q");
   if(q) q.value="";
@@ -11,6 +21,7 @@ function goHome(){
   if(homeFilter) homeFilter.classList.add("active");
   document.querySelectorAll(".filters-btn").forEach(x=>x.classList.toggle("active",x.dataset.filter==="home"));
   renderHome("home");
+  setPageHeader("راهنمای تعمیر Benelli TNT 249","خانه");
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -48,13 +59,17 @@ function renderCategories(){
 function showRepair(id){
   const e=repairs.find(x=>x.id===id);if(!e)return;
   $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت به موضوعات</button><div class="detail-head"><div class="eyebrow">موضوع تعمیر</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div></div><section><h3>مسیر بررسی</h3><ol>'+(e.steps||[]).map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol></section><section><h3>صفحات مرتبط دفترچه</h3><div class="page-list">'+uniquePages(e.pages).map(p=>'<button class="page-chip" data-pdf="'+p+'">صفحه '+p+'</button>').join("")+'</div></section><section class="pdf-link"><h3>دفترچه اصلی</h3><p>برای دیدن خود صفحه، بدون توضیح اضافه:</p>'+pdfButtons(e.pages)+'</section>';
-  $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();window.scrollTo({top:0,behavior:"smooth"});
+  $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();
+  setPageHeader(e.title,"تعمیرات › "+e.title);
+  window.scrollTo({top:0,behavior:"smooth"});
 }
-function closeDetail(){$("#detail").classList.add("hidden");$("#results").classList.remove("hidden");renderHome("home")}
+function closeDetail(){$("#detail").classList.add("hidden");$("#results").classList.remove("hidden");renderHome("home");setPageHeader("راهنمای تعمیر Benelli TNT 249","خانه")}
 function showManualPage(n){
   const e=page(n);if(!e)return;
   $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>صفحه '+e.page+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note">'+esc(e.notes||"برای این صفحه توضیح فارسی ثبت نشده است.")+'</div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3>'+pdfButtons([e.page])+'</section>';
-  $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();window.scrollTo({top:0,behavior:"smooth"});
+  $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();
+  setPageHeader("صفحه "+e.page,"دفترچه › صفحه "+e.page);
+  window.scrollTo({top:0,behavior:"smooth"});
 }
 function search(){
   const q=norm($("#q").value),mode=document.querySelector(".filters .active").dataset.filter;

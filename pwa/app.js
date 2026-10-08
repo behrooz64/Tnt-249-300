@@ -1,11 +1,7 @@
 const $=s=>document.querySelector(s);
 function setPageHeader(title="صفحه اصلی", section="خانه"){
-  const titleEl=document.querySelector("#pageTitle");
-  const crumbEl=document.querySelector("#pageBreadcrumb");
   const contentTitle=document.querySelector("#contentPageTitle");
   const contentCrumb=document.querySelector("#contentPageBreadcrumb");
-  if(titleEl) titleEl.textContent=title;
-  if(crumbEl) crumbEl.textContent=section;
   if(contentTitle) contentTitle.textContent=title;
   if(contentCrumb) contentCrumb.textContent=section;
 }

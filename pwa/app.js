@@ -5,7 +5,8 @@ function setPageHeader(title="صفحه اصلی", section="خانه"){
   if(contentTitle) contentTitle.textContent=title;
   if(contentCrumb) contentCrumb.textContent=section;
 }
-function goHome(){
+function goHome(fromHistory=false){
+  if(!fromHistory) history.pushState({tnt249:true,view:"home",mode:"home"},"",location.href);
   const q=$("#q");
   if(q) q.value="";
   $("#detail")?.classList.add("hidden");
@@ -20,6 +21,32 @@ function goHome(){
   setPageHeader("راهنمای تعمیر Benelli TNT 249","خانه");
   window.scrollTo({top:0,behavior:"smooth"});
 }
+
+function pushViewState(state){history.pushState(Object.assign({tnt249:true},state),"",location.href)}
+function replaceViewState(state){history.replaceState(Object.assign({tnt249:true},state),"",location.href)}
+function restoreViewState(state){
+  if(!state||!state.tnt249){goHome(true);return}
+  if(state.view==="home"){
+    $("#q").value="";
+    document.querySelectorAll(".filters button").forEach(x=>x.classList.toggle("active",x.dataset.filter===state.mode));
+    renderHome(state.mode||"home");
+    setPageHeader("راهنمای تعمیر Benelli TNT 249","خانه");
+    return;
+  }
+  if(state.view==="search"){
+    $("#q").value=state.q||"";
+    document.querySelectorAll(".filters button").forEach(x=>x.classList.toggle("active",x.dataset.filter===state.mode));
+    search(false);
+    return;
+  }
+  if(state.view==="directory"){showManualDirectory(state.lang||"fa",true);return}
+  if(state.view==="repair"){showRepair(state.id,true);return}
+  if(state.view==="manual"){showManualPage(state.page,state.lang,true);return}
+  if(state.view==="pdf"){showPDF(state.page,true);return}
+  goHome(true);
+}
+history.replaceState({tnt249:true,view:"home",mode:"home"},"",location.href);
+window.addEventListener("popstate",e=>restoreViewState(e.state));
 
 let manual=[],repairs=[],specs=[];
 const norm=s=>String(s||"").toLowerCase().replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/ۀ/g,"ه").replace(/[\u200c\u200d]/g," ").replace(/[،؛:؟!.,;:()\[\]{}\/\\]/g," ").replace(/\s+/g," ").trim();
@@ -41,14 +68,18 @@ function manualPageLabel(n){
 function pdfLabel(n){
   return "صفحه PDF "+manualPageNumber(n);
 }
-function showPDF(n){
+function showPDF(n,fromHistory=false){
   const p=Number(n),v=$("#pdfViewer"); if(!p)return;
+  if(!fromHistory) pushViewState({view:"pdf",page:p});
   const pad=String(p).padStart(4,"0"),img="./docs/images/pages/page-"+pad+".png";
   v.innerHTML='<div class="pdf-top"><button id="closePdf">← بستن</button><span>'+pdfLabel(p)+'</span></div><img class="pdf-page" src="'+img+'" alt="'+pdfLabel(p)+'">';
   v.classList.remove("hidden"); document.body.classList.add("modal-open");
   $("#closePdf").onclick=closePDF; v.scrollIntoView({behavior:"smooth",block:"start"});
 }
-function closePDF(){$("#pdfViewer").classList.add("hidden");document.body.classList.remove("modal-open")}
+function closePDF(fromHistory=false){
+  if(!fromHistory && history.state?.view==="pdf"){history.back();return}
+  $("#pdfViewer").classList.add("hidden");document.body.classList.remove("modal-open")
+}
 function pdfButtons(pages){return uniquePages(pages).map(p=>'<button class="pdf-btn" data-pdf="'+p+'">'+pdfLabel(p)+'</button>').join("")}
 function bindPDF(){document.querySelectorAll("[data-pdf]").forEach(b=>b.onclick=()=>showPDF(b.dataset.pdf));document.querySelectorAll("[data-home]").forEach(b=>b.onclick=goHome)}
 function renderCategories(){
@@ -73,8 +104,9 @@ const repairStepPages={"no-start":[[376,377,378],[408],[403,404,405,406,407],[48
 function repairPageButtons(pages){
   return uniquePages(pages).map(p=>'<button class="page-chip" data-pdf="'+p+'">'+pdfLabel(p)+'</button>').join("");
 }
-function showRepair(id){
+function showRepair(id,fromHistory=false){
   const e=repairs.find(x=>x.id===id);if(!e)return;
+  if(!fromHistory) pushViewState({view:"repair",id:e.id});
   const groups=repairStepPages[e.id]||[];
   const steps=(e.steps||[]).map((s,i)=>{
     const pages=groups[i]||[];
@@ -87,9 +119,13 @@ function showRepair(id){
   setPageHeader(e.title,"تعمیرات › "+e.title);
   window.scrollTo({top:0,behavior:"smooth"});
 }
-function closeDetail(){$("#detail").classList.add("hidden");$("#results").classList.remove("hidden");renderHome("home");setPageHeader("راهنمای تعمیر Benelli TNT 249","خانه")}
-function showManualPage(n){
+function closeDetail(fromHistory=false){
+  if(!fromHistory && (history.state?.view==="repair"||history.state?.view==="manual")){history.back();return}
+  $("#detail").classList.add("hidden");$("#results").classList.remove("hidden");renderHome("home");setPageHeader("راهنمای تعمیر Benelli TNT 249","خانه")
+}
+function showManualPage(n,lang="",fromHistory=false){
   const e=page(n);if(!e)return;
+  if(!fromHistory) pushViewState({view:"manual",page:e.page,lang:lang||"fa"});
   $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>'+manualPageLabel(e.page)+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl" style="text-align:right;line-height:2">'+formatPersianNotes(e.notes)+'</div></section><section class="pdf-link"><h3>صفحه اصلی</h3>'+pdfButtons([e.page])+'</section>';
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();
   setPageHeader(manualPageLabel(e.page),"دفترچه › "+manualPageLabel(e.page));
@@ -173,8 +209,9 @@ function manualTocEntries(){
     ["TNT300 Circuit Diagram (Chinese Market)",487],["TNT300 Circuit Diagram (EURO-STANDARD)",488]
   ];
 }
-function showManualDirectory(lang){
+function showManualDirectory(lang,fromHistory=false){
   const fa=lang==="fa", box=$("#results");
+  if(!fromHistory) pushViewState({view:"directory",lang:lang});
   $("#detail").classList.add("hidden"); $("#pdfViewer").classList.add("hidden"); box.classList.remove("hidden");
   document.querySelectorAll(".filters-btn").forEach(x=>x.classList.remove("active"));
   document.querySelectorAll(".manual-lang-btn").forEach(x=>x.classList.toggle("active",x.dataset.manualLang===lang));
@@ -342,9 +379,15 @@ async function showManualPage(n,lang){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function search(){
+function search(pushHistory=false){
   const q=norm($("#q").value),mode=document.querySelector(".filters .active").dataset.filter;
-  if(!q){renderHome(mode);return}
+  if(!q){
+    renderHome(mode);
+    if(pushHistory) pushViewState({view:"home",mode});
+    return
+  }
+  if(pushHistory || history.state?.view!=="search") pushViewState({view:"search",q,mode});
+  else replaceViewState({view:"search",q,mode});
   const terms=q.split(" ").filter(Boolean);
   if(mode==="repair"||mode==="home"){
     const r=repairs.map(e=>({...e,score:score(e.title+" "+(e.keywords||[]).join(" ")+" "+(e.steps||[]).join(" "),terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
@@ -374,4 +417,4 @@ function renderHome(mode){
 async function load(url){const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw Error(r.status);return r.json()}
 async function init(){try{const[m,r,s]=await Promise.all([load("./data/manual-index.json?v=20261007"),load("./data/repair-index.json?v=20261007"),load("./data/repair-specs.json?v=20261007")]);manual=m.pages||m;repairs=Array.isArray(r)?r:r.entries||[];specs=Array.isArray(s)?s:s.entries||[];renderHome("home")}catch(e){$("#status").textContent="خطا در بارگذاری داده‌ها: "+e.message}}
 document.querySelectorAll(".manual-lang-btn").forEach(b=>b.onclick=()=>showManualDirectory(b.dataset.manualLang));
-$("#q").addEventListener("input",search);$("#q").addEventListener("keydown",e=>{if(e.key==="Enter")search()});$("#clear").onclick=()=>{$("#q").value="";search();$("#q").focus()};document.querySelectorAll(".filters button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filters button").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("#q").value="";renderHome(b.dataset.filter)});$("#pdfViewer").addEventListener("click",e=>{if(e.target.id==="pdfViewer")closePDF()});init();
+$("#q").addEventListener("input",()=>search(false));$("#q").addEventListener("keydown",e=>{if(e.key==="Enter")search(true)});$("#clear").onclick=()=>{$("#q").value="";const mode=document.querySelector(".filters .active").dataset.filter;pushViewState({view:"home",mode});renderHome(mode);$("#q").focus()};document.querySelectorAll(".filters button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filters button").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("#q").value="";pushViewState({view:"home",mode:b.dataset.filter});renderHome(b.dataset.filter)});$("#pdfViewer").addEventListener("click",e=>{if(e.target.id==="pdfViewer")closePDF()});init();

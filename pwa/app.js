@@ -97,8 +97,7 @@ function manualTocEntries(){
     ["Control / Handlebar",159],["Rear Shock Absorber",163],["Drive Chain and Rear Swing Arm",167],["Drive Chain and Rear Swing Arm",168],
     ["Drive Chain and Rear Swing Arm / Rear Swing Arm",171],["Frame",174],["Frame / Engine Assembly",175],
     ["Frame / Rear License Plate Support",179],["Frame / Side Stand",182],["Frame / Left Foot Pedal",185],["Frame / Right Foot Pedal",188],
-    ["Muffler",191],["Fairing / Cowling Parts",196],["Fairing / Cowling Parts / Front Fender",198],
-    ["Fairing / Cowling Parts / Rear Fender",201],["Assembly of Fairing / Cowling Parts / Rear Lower Fender and Chain Cover",205],
+    ["Muffler",191],["Fairing / Cowling Parts",196],["Fairing / Cowling Parts / Front Fender",198],    ["Fairing / Cowling Parts / Rear Fender",201],["Assembly of Fairing / Cowling Parts / Rear Lower Fender and Chain Cover",205],
     ["Fairing / Cowling Parts / Fuel Tank Cowling and Lower Fairing",208],["Fairing / Cowling Parts / Tailsection",212],
     ["Fairing / Cowling Parts / Headlight Fairing",217],["Lights",220],["Lights / Rear Taillight",221],
     ["Lights / Front Turn Signal Light",222],["Lights / Rear Turn Signal Light",223],
@@ -197,8 +196,7 @@ function showManualDirectory(lang){
       "Frame / Side Stand":"شاسی / جک بغل","Frame / Left Foot Pedal":"شاسی / جاپایی چپ","Frame / Right Foot Pedal":"شاسی / جاپایی راست",
       "Muffler":"اگزوز","Fairing / Cowling Parts":"قطعات فلاپ و قاب‌ها","Fairing / Cowling Parts / Front Fender":"قطعات فلاپ و قاب‌ها / گلگیر جلو",
       "Fairing / Cowling Parts / Rear Fender":"قطعات فلاپ و قاب‌ها / گلگیر عقب",
-      "Assembly of Fairing / Cowling Parts / Rear Lower Fender and Chain Cover":"مونتاژ قطعات فلاپ و قاب‌ها / گلگیر پایین عقب و قاب زنجیر",
-      "Fairing / Cowling Parts / Fuel Tank Cowling and Lower Fairing":"قطعات فلاپ و قاب‌ها / قاب باک و فلاپ پایینی",
+      "Assembly of Fairing / Cowling Parts / Rear Lower Fender and Chain Cover":"مونتاژ قطعات فلاپ و قاب‌ها / گلگیر پایین عقب و قاب زنجیر",      "Fairing / Cowling Parts / Fuel Tank Cowling and Lower Fairing":"قطعات فلاپ و قاب‌ها / قاب باک و فلاپ پایینی",
       "Fairing / Cowling Parts / Tailsection":"قطعات فلاپ و قاب‌ها / قسمت انتهایی بدنه",
       "Fairing / Cowling Parts / Headlight Fairing":"قطعات فلاپ و قاب‌ها / قاب چراغ جلو","Lights":"چراغ‌ها","Lights / Rear Taillight":"چراغ‌ها / چراغ عقب",
       "Lights / Front Turn Signal Light":"چراغ‌ها / چراغ راهنمای جلو","Lights / Rear Turn Signal Light":"چراغ‌ها / چراغ راهنمای عقب",
@@ -271,14 +269,15 @@ function showManualDirectory(lang){
 function showManualPage(n,lang){
   const e=page(n); if(!e)return;
   const fa=lang==="fa", imgs=(e.images||[]).filter(Boolean);
-  const imageHtml=imgs.map(src=>'<img class="manual-page-image" src="'+imgPath(src)+'" alt="صفحه '+e.page+'" loading="lazy">').join("");
+  const displayPage=fa ? Math.max(1,Number(e.page)-1) : Number(e.page);
+  const imageHtml=imgs.map(src=>'<img class="manual-page-image" src="'+imgPath(src)+'" alt="صفحه '+displayPage+'" loading="lazy">').join("");
   const body=fa
     ? '<section><h3>توضیحات فارسی</h3><div class="fa-note">'+esc(e.notes||"برای این صفحه توضیح فارسی ثبت نشده است.")+'</div></section><section><h3>تصاویر</h3><div class="manual-images">'+(imageHtml||'<div class="empty">تصویر موجود نیست.</div>')+'</div></section><section class="pdf-link"><h3>صفحه اصلی انگلیسی</h3>'+pdfButtons([e.page])+'</section>'
-    : '<section><h3>صفحه اصلی دفترچه</h3><div class="manual-images">'+(imageHtml||'<div class="empty">تصویر موجود نیست.</div>')+'</div></section>';
-  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backManual">← بازگشت</button></div><div class="detail-head"><div class="eyebrow">'+(fa?"راهنمای فارسی":"راهنمای انگلیسی")+'</div><h2>صفحه '+e.page+'</h2></div>'+body;
+    : '<section><h3>صفحه اصلی دفترچه</h3><div class="manual-images">'+(imageHtml||'<div class="empty">تصویر این صفحه موجود نیست.</div>')+'</div></section>';
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backManual">← بازگشت</button></div><div class="detail-head"><div class="eyebrow">'+(fa?"راهنمای فارسی":"راهنمای انگلیسی")+'</div><h2>صفحه '+displayPage+'</h2></div>'+body;
   $("#results").classList.add("hidden"); $("#detail").classList.remove("hidden");
   $("#backManual").onclick=()=>showManualDirectory(lang);
-  bindPDF(); setPageHeader("صفحه "+e.page,(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی")+" › صفحه "+e.page);
+  bindPDF(); setPageHeader("صفحه "+displayPage,(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی")+" › صفحه "+displayPage);
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -297,8 +296,7 @@ function search(){
 function score(h,terms){const x=norm(h);let s=0;terms.forEach(t=>{if(x.includes(t))s+=x.indexOf(t)<120?3:1});return s}
 function renderRepairResults(list){
   const box=$("#results");$("#detail").classList.add("hidden");box.classList.remove("hidden");
-  if(!list.length){box.innerHTML='<div class="empty">موضوع مرتبط پیدا نشد.</div>';return}
-  box.innerHTML='<div class="section-title"><h2>نتایج موضوعی</h2><p>برای دیدن توضیحات، روی موضوع بزن.</p></div>'+list.slice(0,30).map(e=>'<article class="result-card"><div class="eyebrow">موضوع</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).slice(0,5).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div><div class="result-meta">صفحات مرتبط: '+uniquePages(e.pages).join("، ")+'</div><button class="primary" data-topic="'+esc(e.id)+'">مشاهده توضیحات</button></article>').join("");
+  if(!list.length){box.innerHTML='<div class="empty">موضوع مرتبط پیدا نشد.</div>';return}  box.innerHTML='<div class="section-title"><h2>نتایج موضوعی</h2><p>برای دیدن توضیحات، روی موضوع بزن.</p></div>'+list.slice(0,30).map(e=>'<article class="result-card"><div class="eyebrow">موضوع</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).slice(0,5).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div><div class="result-meta">صفحات مرتبط: '+uniquePages(e.pages).join("، ")+'</div><button class="primary" data-topic="'+esc(e.id)+'">مشاهده توضیحات</button></article>').join("");
   box.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>showRepair(b.dataset.topic));
 }
 function renderManualResults(list){

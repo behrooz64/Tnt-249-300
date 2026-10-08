@@ -267,43 +267,34 @@ function showManualDirectory(lang){
 }
 
 function formatPersianInline(s){
-  return esc(s)
-    .replace(/\\*\\*([^*]+)\\*\\*/g,"<strong>$1</strong>")
-    .replace(/\\*([^*]+)\\*/g,"<em>$1</em>");
-}
-function formatPersianInline(s){
   return esc(String(s||""))
-    .replace(/\\*\\*(.+?)\\*\\*/g,"<strong>$1</strong>")
-    .replace(/\\*(.+?)\\*/g,"<em>$1</em>");
+    .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g,"<em>$1</em>");
 }
-
 function formatPersianNotes(raw){
-  const lines=String(raw||"").replace(/\\r/g,"").split("\\n");
+  const lines=String(raw||"").replace(/\r/g,"").split(/\n/);
   const out=[];
-  let para=[];
-  const flush=()=>{
-    const text=para.join(" ").trim();
-    if(text) out.push("<p>"+formatPersianInline(text)+"</p>");
-    para=[];
+  const pushSentence=s=>{
+    const t=s.trim();
+    if(t) out.push("<p>"+formatPersianInline(t)+"</p>");
   };
   lines.forEach(line=>{
     let t=line.trim();
-    if(!t){flush();return;}
-    const heading=t.match(/^#{3,6}\\s+(.+)$/);
-    if(heading){flush();out.push("<h4>"+formatPersianInline(heading[1])+"</h4>");return;}
-    t=t.replace(/\\s*\\/\\s*/g,"/\\n").replace(/\\s*\\*\\s*/g,"*\\n");
-    const parts=t.split("\\n").map(x=>x.trim()).filter(Boolean);
-    parts.forEach(part=>{
-      if(/^\\d+[.)]\\s+/.test(part)){flush();out.push("<p class=\\"fa-step\\">"+formatPersianInline(part)+"</p>");}
-      else para.push(part.replace(/\\.\\s+(?=[^0-9])/g,".\\n").split("\\n").filter(Boolean).join("\\n"));
+    if(!t)return;
+    const h=t.match(/^#{3,6}\s+(.+)$/);
+    if(h){out.push("<h4>"+formatPersianInline(h[1])+"</h4>");return;}
+    t=t.replace(/\s*\/\s*/g,"\n").replace(/\s*\*\s*/g,"\n");
+    t.split(/\n+/).forEach(part=>{
+      const p=part.trim();
+      if(!p)return;
+      if(/^\d+[.)]\s+/.test(p)){pushSentence(p);return;}
+      p.split(/\.\s+/).forEach((sentence,index)=>{
+        const s=sentence.trim();
+        if(!s)return;
+        pushSentence(index<p.split(/\.\s+/).length-1 ? s+"." : s);
+      });
     });
-    if(para.length){
-      const joined=para.join(" ");
-      para=[];
-      joined.split(/(?<=\\.)\\s+/).filter(Boolean).forEach(x=>out.push("<p>"+formatPersianInline(x.trim())+"</p>"));
-    }
   });
-  flush();
   return out.join("")||"<p>برای این صفحه توضیح فارسی ثبت نشده است.</p>";
 }
 

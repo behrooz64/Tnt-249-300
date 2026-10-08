@@ -361,8 +361,9 @@ function formatPersianNotes(raw){
   return out.join("")||"<p>برای این صفحه توضیح فارسی ثبت نشده است.</p>";
 }
 
-async function showManualPage(n,lang){
+async function showManualPage(n,lang,fromHistory=false){
   const p=Number(n); if(!p)return;
+  if(!fromHistory) pushViewState({view:"manual",page:p,lang:lang||"fa"});
   const fa=lang==="fa",pad=String(p).padStart(4,"0"),url="./docs/manual-pages/page-"+pad+".md";
   let raw="";
   try{const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw Error(r.status);raw=await r.text()}catch(e){raw=""}
@@ -374,7 +375,7 @@ async function showManualPage(n,lang){
     : '<section><h3>'+manualPageLabel(p)+'</h3><div class="manual-images"><img class="manual-page-image" src="'+image+'" alt="'+manualPageLabel(p)+'" loading="lazy"></div></section>';
   $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backManual">← بازگشت</button></div><div class="detail-head"><div class="eyebrow">'+(fa?"راهنمای فارسی":"راهنمای انگلیسی")+'</div><h2>'+manualPageLabel(p)+'</h2></div>'+body;
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");
-  $("#backManual").onclick=()=>showManualDirectory(lang);
+  $("#backManual").onclick=()=>{if(history.state?.view==="manual"){history.back();return}showManualDirectory(lang)};
   bindPDF();setPageHeader(manualPageLabel(p),(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی")+" › "+manualPageLabel(p));
   window.scrollTo({top:0,behavior:"smooth"});
 }

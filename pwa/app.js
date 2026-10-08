@@ -72,7 +72,7 @@ function showManualPage(n){
 }
 function manualTocEntries(){
   return [
-    ["Guide List - PDF Page 9",9],["Guide List - PDF Page 10",10],["Guide List - PDF Page 11",11],["Guide List - PDF Page 12",12],["Guide List - PDF Page 13",13],["Guide List - PDF Page 14",14],
+    ["Contents",8,9],["Contents",9,10],["Contents",10,11],["Contents",11,12],["Contents",12,13],["Contents",13,14],
     ["Preface",1],["User Guide",3],["Exhaust Emission Control Information",4],["Symbols",5],["Specific Symbols",5],["Symbol Interpretation",6],
     ["Chapter I General Information",14],["General Safety",15],["Identification",16],["Motorcycle Identification",16],["Important Parts",17],
     ["Features",18],["Instruments and Lights",18],["Important Information",20],["Preparation for Disassembly and Disassembling Operation",20],
@@ -159,7 +159,7 @@ function showManualDirectory(lang){
     box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><div class="eyebrow">نسخه فارسی</div><h2>راهنمای کامل فارسی</h2><p>صفحات با توضیحات فارسی و تصاویر.</p></div><span class="manual-count">'+pages.length+' صفحه</span></div><div class="manual-page-grid">'+pages.map(p=>'<button class="manual-page-item" data-manual-page="'+p+'" data-manual-lang="fa">صفحه '+p+' <i class="bi bi-chevron-left"></i></button>').join("")+'</div></div>';
   }else{
     const entries=manualTocEntries();
-    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>فهرست راهنمای کامل انگلیسی</h2></div></div><div class="manual-toc-list">'+entries.map(([title,p])=>'<button class="manual-toc-item" data-manual-page="'+p+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+p+'</strong></button>').join("")+'</div></div>';
+    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>فهرست راهنمای کامل انگلیسی</h2></div></div><div class="manual-toc-list">'+entries.map(e=>{const title=e[0],p=e[1],display=e[2]??p;return '<button class="manual-toc-item" data-manual-page="'+p+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+display+'</strong></button>'}).join("")+'</div></div>';
   }
   box.querySelectorAll("[data-manual-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.manualPage,b.dataset.manualLang));
   setPageHeader(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی",fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی");

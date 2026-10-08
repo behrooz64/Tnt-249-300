@@ -112,3 +112,5 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
 .manual-toc-item span{line-height:1.45}
 .manual-toc-item strong{min-width:3rem;text-align:center;font-size:.9rem;padding:.25rem .5rem;border-radius:.4rem;background:var(--bs-secondary-bg);direction:ltr}
 @media (max-width:575.98px){.manual-toc-item{grid-template-columns:1fr auto;gap:.6rem;padding:.62rem .65rem;font-size:.9rem}.manual-toc-item strong{min-width:2.6rem}}
+
+.manual-toc-section{margin-top:1rem}.manual-toc-section h3{margin:.25rem 0 .65rem;font-size:1rem}.manual-toc-section+.manual-toc-section{padding-top:1rem;border-top:1px solid var(--bs-border-color)}

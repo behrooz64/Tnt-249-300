@@ -258,7 +258,7 @@ function showManualDirectory(lang){
       "TNT300 Circuit Diagram (Chinese Market)":"نقشه مدار TNT300 (بازار چین)","TNT300 Circuit Diagram (EURO-STANDARD)":"نقشه مدار TNT300 (استاندارد اروپا)"
     };
     const entries=manualTocEntries();
-    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>راهنمای کامل فارسی</h2></div><span class="manual-count">'+entries.length+' مورد</span></div><div class="manual-toc-list">'+entries.map(e=>{const pdfPage=Number(e[1])+1;return '<button class="manual-toc-item" style="direction:rtl;grid-template-columns:auto 1fr;text-align:right" data-manual-page="'+pdfPage+'" data-manual-lang="fa"><strong>'+pdfPage+'</strong><span>'+esc(titleMap[e[0]]||e[0])+'</span></button>'}).join("")+'</div></div>';
+    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>راهنمای کامل فارسی</h2></div><span class="manual-count">'+entries.length+' مورد</span></div><div class="manual-toc-list">'+entries.map(e=>{const pdfPage=Number(e[1]);return '<button class="manual-toc-item" style="direction:rtl;grid-template-columns:auto 1fr;text-align:right" data-manual-page="'+pdfPage+'" data-manual-lang="fa"><strong>'+pdfPage+'</strong><span>'+esc(titleMap[e[0]]||e[0])+'</span></button>'}).join("")+'</div></div>';
   }else{
     const entries=manualTocEntries();
     box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>فهرست راهنمای کامل انگلیسی</h2></div></div><div class="manual-toc-list">'+entries.map(e=>{const title=e[0],p=e[1],display=e[2]??p;return '<button class="manual-toc-item" data-manual-page="'+(Number(p)+1)+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+display+'</strong></button>'}).join("")+'</div></div>';

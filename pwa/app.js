@@ -39,16 +39,19 @@ function pdfButtons(pages){return uniquePages(pages).map(p=>'<button class="pdf-
 function bindPDF(){document.querySelectorAll("[data-pdf]").forEach(b=>b.onclick=()=>showPDF(b.dataset.pdf));document.querySelectorAll("[data-home]").forEach(b=>b.onclick=goHome)}
 function renderCategories(){
   const groups=[
-    ["موتور و مکانیک",["valve-compression","oil-pressure"]],
-    ["سوخت و EFI",["fuel-pressure","throttle-tps-idle","injector","sensors-efi","crank-no-start","rough-low-rpm"]],
-    ["خنک‌کاری",["overheat"]],
-    ["برق و استارت",["no-start","battery-charging","dtc"]],
-    ["شاسی و ترمز",["brakes","chain-chassis"]]
+    ["موتور و مکانیک","🔧",["valve-compression","oil-pressure"]],
+    ["سوخت و EFI","⛽",["fuel-pressure","throttle-tps-idle","injector","sensors-efi","crank-no-start","rough-low-rpm"]],
+    ["خنک‌کاری","🌡️",["overheat"]],
+    ["برق و استارت","⚡",["no-start","battery-charging","dtc"]],
+    ["شاسی و ترمز","🛞",["brakes","chain-chassis"]]
   ];
   const map=new Map(repairs.map(x=>[x.id,x]));
   const box=$("#results");
   box.innerHTML=
-  groups.map(([name,ids])=>'<section class="category"><h2>'+esc(name)+'</h2><div class="topic-grid">'+ids.map(id=>{const e=map.get(id);return e?'<button class="topic-card" data-topic="'+esc(id)+'"><span>'+esc(e.title)+'</span><small>'+uniquePages(e.pages).length+' صفحه مرتبط</small></button>':""}).join("")+'</div></section>').join("");
+  '<div class="home-topic-grid">'+groups.map(([name,icon,ids])=>{
+    const valid=ids.map(id=>map.get(id)).filter(Boolean);
+    return '<section class="category"><div class="category-head"><div class="category-title"><span class="category-icon" aria-hidden="true">'+icon+'</span><h2>'+esc(name)+'</h2></div><span class="category-count">'+valid.length+' موضوع</span></div><div class="topic-grid">'+valid.map(e=>'<button class="topic-card" data-topic="'+esc(e.id)+'"><span>'+esc(e.title)+'</span><small>'+uniquePages(e.pages).length+' صفحه مرتبط</small><i class="bi bi-chevron-left topic-arrow" aria-hidden="true"></i></button>').join("")+'</div></section>';
+  }).join("")+'</div>';
   box.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>showRepair(b.dataset.topic));
   $("#status").textContent="";
 }

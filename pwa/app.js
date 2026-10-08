@@ -72,6 +72,23 @@ function showManualPage(n){
 }
 function manualTocEntries(){
   return [
+    ["Preface",1],["User Guide",3],["Exhaust Emission Control Information",4],["Symbols",5],["Specific Symbols",5],["Symbol Interpretation",6],
+    ["Chapter I General Information",14],["General Safety",15],["Identification",16],["Motorcycle Identification",16],["Important Parts",17],
+    ["Features",18],["Instruments and Lights",18],["Important Information",20],["Preparation for Disassembly and Disassembling Operation",20],
+    ["Gaskets, O-rings, Seals and Bearings",21],["Lock Washer/locking plate, Bolt and Thread Sealant",22],["Circlips",22],
+    ["Cable-To-Cable Connector Check",23],["Special Tools",25],["Chapter II Specification",30],["Basic Specifications",31],
+    ["Technical Data of the Engine",32],["Technical Details of the Engine",35],["Technical Data of the Motorcycle",38],
+    ["Electrical Data",41],["Technical Data of Nut Locking Torque",45],["Technical Data of Bolt and Screw Torque",46],
+    ["Chapter III Check and Regular Adjustment",49],["Regular Maintenance and Lubrication Interval",50],
+    ["Regular Maintenance and Lubrication Interval Schedule",51],["Air Filter",54],["Fuel Hose",57],["Control",58],
+    ["Throttle Cable",59],["Clutch Cable",60],["Rearview Mirrors",61],["Engine Oil",62],["Engine Oil Filter",65],
+    ["Coolant",66],["Radiator Hoses",67],["Spark Plugs",68],["Valve Clearance",72],["Brake Adjustment",76],
+    ["Check of Brake Fluid",78],["Check of Brake Pads",83],["Check of Brake Hoses",84],["Adjustment of the Drive Chain",85],
+    ["Check and Adjustment of the Steering Stem Bearings",87],["Check of Front Fork",90],["Check of Rear Shock Absorber",91],
+    ["Check of Front and Rear Tires",92],["Check and Battery Charging",93],["Check of Fuses",100],
+    ["Replacement of the Headlight Bulb",102],["Adjustment of the Headlight",104],
+    ["Replacement of the Front Turn Signal Light Bulb",105],["Replacement of the Rear License Plate Light",106],
+
     ["Section IV Motorcycle",108],["Front Wheel and Front Brake Rotor",109],["Rear Wheel and Rear Brake Rotor",118],
     ["Front and Rear Brakes",127],["Front and Rear Brakes / Front Brake Pads",129],["Front and Rear Brakes / Rear Brake Pads",130],
     ["Front and Rear Brakes / Front Brake",131],["Front and Rear Brakes / Front Brake",136],["Front Suspension",142],
@@ -142,9 +159,7 @@ function showManualDirectory(lang){
     box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><div class="eyebrow">نسخه فارسی</div><h2>راهنمای کامل فارسی</h2><p>صفحات با توضیحات فارسی و تصاویر.</p></div><span class="manual-count">'+pages.length+' صفحه</span></div><div class="manual-page-grid">'+pages.map(p=>'<button class="manual-page-item" data-manual-page="'+p+'" data-manual-lang="fa">صفحه '+p+' <i class="bi bi-chevron-left"></i></button>').join("")+'</div></div>';
   }else{
     const entries=manualTocEntries();
-    const introPages=uniquePages(manual.map(x=>x.page)).filter(p=>p>=1&&p<=107);
-    const introEntries=introPages.map(p=>[manual.find(x=>x.page===p)?.title||"PDF page "+p,p]);
-    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>فهرست راهنمای کامل انگلیسی</h2></div></div><section class="manual-toc-section"><h3>بخش</h3><div class="manual-toc-list">'+introEntries.map(([title,p])=>'<button class="manual-toc-item" data-manual-page="'+p+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>صفحه '+p+'</strong></button>').join("")+'</div></section><section class="manual-toc-section"><h3>فهرست مطالب و بخش‌های دفترچه</h3><div class="manual-toc-list">'+entries.map(([title,p])=>'<button class="manual-toc-item" data-manual-page="'+p+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+p+'</strong></button>').join("")+'</div></section></div>';
+    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>فهرست راهنمای کامل انگلیسی</h2></div></div><div class="manual-toc-list">'+entries.map(([title,p])=>'<button class="manual-toc-item" data-manual-page="'+p+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+p+'</strong></button>').join("")+'</div></div>';
   }
   box.querySelectorAll("[data-manual-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.manualPage,b.dataset.manualLang));
   setPageHeader(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی",fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی");

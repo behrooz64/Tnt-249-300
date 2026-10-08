@@ -156,7 +156,7 @@ function showManualDirectory(lang){
   document.querySelectorAll(".manual-lang-btn").forEach(x=>x.classList.toggle("active",x.dataset.manualLang===lang));
   if(fa){
     const pages=uniquePages(manual.map(x=>x.page));
-    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><div class="eyebrow">نسخه فارسی</div><h2>راهنمای کامل فارسی</h2><p>صفحات با توضیحات فارسی و تصاویر.</p></div><span class="manual-count">'+pages.length+' صفحه</span></div><div class="manual-page-grid">'+pages.map(p=>'<button class="manual-page-item" data-manual-page="'+p+'" data-manual-lang="fa">صفحه '+p+' <i class="bi bi-chevron-left"></i></button>').join("")+'</div></div>';
+    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><div class="eyebrow">نسخه فارسی</div><h2>راهنمای کامل فارسی</h2><p>صفحات با توضیحات فارسی و تصاویر.</p></div><span class="manual-count">'+pages.length+' صفحه</span></div><div class="manual-page-grid">'+pages.map(p=>'<button class="manual-page-item" data-manual-page="'+(Number(p)-1)+'" data-manual-lang="fa">صفحه '+p+' <i class="bi bi-chevron-left"></i></button>').join("")+'</div></div>';
   }else{
     const entries=manualTocEntries();
     box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>فهرست راهنمای کامل انگلیسی</h2></div></div><div class="manual-toc-list">'+entries.map(e=>{const title=e[0],p=e[1],display=e[2]??p;return '<button class="manual-toc-item" data-manual-page="'+(Number(p)+1)+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+display+'</strong></button>'}).join("")+'</div></div>';

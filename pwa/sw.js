@@ -1,19 +1,19 @@
-const CACHE="tnt249-manual-v5";
-const ASSETS=["./","./index.html","./app.js","./styles.css","./manifest.json","./data/manual-index.json","./data/repair-index.json","./data/repair-specs.json"];
+const CACHE="tnt249-dev-no-cache-v1";
 
 self.addEventListener("install",event=>{
-  event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()));
+  event.waitUntil(self.skipWaiting());
 });
+
 self.addEventListener("activate",event=>{
-  event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()));
+  event.waitUntil(
+    caches.keys()
+      .then(keys=>Promise.all(keys.map(key=>caches.delete(key))))
+      .then(()=>self.clients.claim())
+      .then(()=>self.registration.unregister())
+  );
 });
+
 self.addEventListener("fetch",event=>{
   if(event.request.method!=="GET") return;
-  event.respondWith(fetch(event.request).then(response=>{
-    if(response.ok){
-      const copy=response.clone();
-      caches.open(CACHE).then(c=>c.put(event.request,copy));
-    }
-    return response;
-  }).catch(()=>caches.match(event.request)));
+  event.respondWith(fetch(event.request,{cache:"no-store"}));
 });

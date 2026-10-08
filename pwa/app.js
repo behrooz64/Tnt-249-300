@@ -72,7 +72,6 @@ function showManualPage(n){
 }
 function manualTocEntries(){
   return [
-    ["Contents",9],
     ["Preface",1],["User Guide",3],["Exhaust Emission Control Information",4],["Symbols",5],["Specific Symbols",5],["Symbol Interpretation",6],
     ["Chapter I General Information",14],["General Safety",15],["Identification",16],["Motorcycle Identification",16],["Important Parts",17],
     ["Features",18],["Instruments and Lights",18],["Important Information",20],["Preparation for Disassembly and Disassembling Operation",20],

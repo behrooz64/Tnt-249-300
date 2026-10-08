@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.10.0/dist/css/adminlte.rtl.min.css">
-<link rel="stylesheet" href="styles.css?v=20261008-adminlte-home-1">
+<link rel="stylesheet" href="styles.css?v=20261008-adminlte-home-2">
 <title>راهنمای تعمیر Benelli TNT 249</title>
 </head>
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -23,10 +23,10 @@
         </a>
       </li>
     </ul>
-    <div class="app-brand-text fw-semibold">راهنمای TNT 249</div>
+    <button id="homeHeader" class="app-brand-text fw-semibold border-0 bg-transparent" type="button" aria-label="صفحه اصلی">راهنمای TNT 249</button>
     <ul class="navbar-nav ms-auto">
       <li class="nav-item">
-        <button class="nav-link border-0 bg-transparent" data-lte-toggle="dark-mode" type="button" aria-label="تغییر حالت نمایش">
+        <button id="darkModeToggle" class="nav-link border-0 bg-transparent" type="button" aria-label="تغییر حالت نمایش">
           <i class="bi bi-moon-stars"></i>
         </button>
       </li>
@@ -36,7 +36,7 @@
 
 <aside class="app-sidebar bg-dark shadow" data-bs-theme="dark">
   <div class="sidebar-brand">
-    <a href="#" class="brand-link" onclick="return false;">
+    <a href="#" id="brandHome" class="brand-link">
       <i class="bi bi-tools brand-image opacity-75"></i>
       <span class="brand-text fw-light">TNT 249 Manual</span>
     </a>
@@ -91,7 +91,7 @@
     <div class="container-fluid">
       <section class="card border-0 shadow-sm mb-3">
         <div class="card-body p-3 p-md-4">
-          <div class="input-group input-group-lg">
+          <div class="input-group search-group">
             <span class="input-group-text bg-body"><i class="bi bi-search"></i></span>
             <input id="q" type="search" class="form-control" placeholder="جست‌وجوی موضوع، قطعه یا ایراد؛ مثلاً استارت، TPS، ترمز" aria-label="جستجو">
             <button id="clear" class="btn btn-outline-secondary" type="button">پاک کردن</button>
@@ -132,7 +132,27 @@
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.10.0/dist/js/adminlte.min.js"></script>
 <script src="app.js?v=20261007-2"></script>
 <script>
-document.querySelectorAll('.filters-btn').forEach(btn => btn.addEventListener('click', () => {
+function goHome(){
+  const q=document.querySelector('#q');
+  if(q) q.value='';
+  document.querySelector('#detail')?.classList.add('hidden');
+  document.querySelector('#pdfViewer')?.classList.add('hidden');
+  document.querySelector('#results')?.classList.remove('hidden');
+  if(typeof renderHome==='function') renderHome('home');
+  document.querySelectorAll('.filters-btn').forEach(x=>x.classList.toggle('active',x.dataset.filter==='home'));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelector('#homeHeader')?.addEventListener('click',goHome);
+document.querySelector('#brandHome')?.addEventListener('click',e=>{e.preventDefault();goHome();});
+const darkBtn=document.querySelector('#darkModeToggle');
+function setTheme(dark){
+  document.body.setAttribute('data-bs-theme',dark?'dark':'light');
+  if(darkBtn) darkBtn.innerHTML=dark?'<i class="bi bi-sun"></i>':'<i class="bi bi-moon-stars"></i>';
+  localStorage.setItem('tnt249-theme',dark?'dark':'light');
+}
+setTheme(localStorage.getItem('tnt249-theme')==='dark');
+darkBtn?.addEventListener('click',()=>setTheme(document.body.getAttribute('data-bs-theme')!=='dark'));
+document.querySelectorAll('.filters-btn').forEach('.filters-btn').forEach(btn => btn.addEventListener('click', () => {
   const target = document.querySelector('.filters button[data-filter="'+btn.dataset.filter+'"]');
   if (target) target.click();
   document.querySelectorAll('.filters-btn').forEach(x => x.classList.remove('active'));

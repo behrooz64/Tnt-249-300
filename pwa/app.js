@@ -65,7 +65,7 @@ function showRepair(id){
 function closeDetail(){$("#detail").classList.add("hidden");$("#results").classList.remove("hidden");renderHome("home");setPageHeader("راهنمای تعمیر Benelli TNT 249","خانه")}
 function showManualPage(n){
   const e=page(n);if(!e)return;
-  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>صفحه '+e.page+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note">'+esc(e.notes||"برای این صفحه توضیح فارسی ثبت نشده است.")+'</div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3>'+pdfButtons([e.page])+'</section>';
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>صفحه '+e.page+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note">formatPersianNotes(e.notes)</div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3>'+pdfButtons([e.page])+'</section>';
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();
   setPageHeader("صفحه "+e.page,"دفترچه › صفحه "+e.page);
   window.scrollTo({top:0,behavior:"smooth"});
@@ -264,6 +264,47 @@ function showManualDirectory(lang){
   box.querySelectorAll("[data-manual-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.manualPage,b.dataset.manualLang));
   setPageHeader(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی",fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی");
   window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function formatPersianInline(s){
+  return esc(s)
+    .replace(/\\*\\*([^*]+)\\*\\*/g,"<strong>$1</strong>")
+    .replace(/\\*([^*]+)\\*/g,"<em>$1</em>");
+}
+function formatPersianNotes(raw){
+  const lines=String(raw||"").replace(/\\r/g,"").split("\\n");
+  const out=[];
+  let para=[],listType=null,listItems=[];
+  const flushPara=()=>{
+    if(!para.length)return;
+    const text=para.join(" ").trim();
+    if(text)out.push("<p>"+formatPersianInline(text)+"</p>");
+    para=[];
+  };
+  const flushList=()=>{
+    if(!listItems.length)return;
+    out.push("<"+listType+">"+listItems.map(x=>"<li>"+formatPersianInline(x)+"</li>").join("")+"</"+listType+">");
+    listItems=[];listType=null;
+  };
+  lines.forEach(line=>{
+    const t=line.trim();
+    if(!t){flushPara();flushList();return;}
+    const h=t.match(/^#{3,6}\\s+(.+)$/);
+    if(h){flushPara();flushList();out.push("<h4>"+formatPersianInline(h[1])+"</h4>");return;}
+    const ol=t.match(/^\\d+[.)]\\s+(.+)$/);
+    const ul=t.match(/^[-*•]\\s+(.+)$/);
+    if(ol||ul){
+      flushPara();
+      const type=ol?"ol":"ul";
+      if(listType!==type){flushList();listType=type;}
+      listItems.push((ol||ul)[1]);
+      return;
+    }
+    if(listType)flushList();
+    para.push(t);
+  });
+  flushPara();flushList();
+  return out.join("")||"<p>برای این صفحه توضیح فارسی ثبت نشده است.</p>";
 }
 
 function showManualPage(n,lang){

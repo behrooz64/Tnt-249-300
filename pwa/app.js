@@ -31,7 +31,7 @@ function uiPageNumber(n){return String(n).replace(/\d/g,d=>"۰۱۲۳۴۵۶۷۸۹
 function manualPageNumber(n){
   const p=Number(n);
   if(!p)return "";
-  return p===1?"جلد":uiPageNumber(p-1);
+  return p===1?"جلد":String(p-1);
 }
 function manualPageLabel(n){
   const p=Number(n);
@@ -39,12 +39,12 @@ function manualPageLabel(n){
   return p===1?"جلد":"صفحه "+manualPageNumber(p);
 }
 function pdfLabel(n){
-  return "صفحه PDF "+uiPageNumber(n);
+  return "صفحه PDF "+manualPageNumber(n);
 }
 function showPDF(n){
   const p=Number(n),v=$("#pdfViewer"); if(!p)return;
   const pad=String(p).padStart(4,"0"),img="./docs/images/pages/page-"+pad+".png";
-  v.innerHTML='<div class="pdf-top"><button id="closePdf">← بستن</button><span>'+pdfLabel(p)+' · '+manualPageLabel(p)+'</span></div><img class="pdf-page" src="'+img+'" alt="'+pdfLabel(p)+'">';
+  v.innerHTML='<div class="pdf-top"><button id="closePdf">← بستن</button><span>'+pdfLabel(p)+'</span></div><img class="pdf-page" src="'+img+'" alt="'+pdfLabel(p)+'">';
   v.classList.remove("hidden"); document.body.classList.add("modal-open");
   $("#closePdf").onclick=closePDF; v.scrollIntoView({behavior:"smooth",block:"start"});
 }

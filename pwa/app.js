@@ -50,7 +50,7 @@ function renderCategories(){
   box.innerHTML=
   groups.map(([name,ids])=>'<section class="category"><h2>'+esc(name)+'</h2><div class="topic-grid">'+ids.map(id=>{const e=map.get(id);return e?'<button class="topic-card" data-topic="'+esc(id)+'"><span>'+esc(e.title)+'</span><small>'+uniquePages(e.pages).length+' صفحه مرتبط</small></button>':""}).join("")+'</div></section>').join("");
   box.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>showRepair(b.dataset.topic));
-  $("#status").textContent="موضوعات آماده است";
+  $("#status").textContent="";
 }
 function showRepair(id){
   const e=repairs.find(x=>x.id===id);if(!e)return;

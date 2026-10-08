@@ -47,7 +47,7 @@ function renderCategories(){
   ];
   const map=new Map(repairs.map(x=>[x.id,x]));
   const box=$("#results");
-  box.innerHTML='<div class="section-title"><h2>دسته‌بندی موضوعات</h2><p>اول موضوع را انتخاب کن؛ توضیحات کامل بعد از ورود به موضوع نمایش داده می‌شود.</p></div>'+
+  box.innerHTML=
   groups.map(([name,ids])=>'<section class="category"><h2>'+esc(name)+'</h2><div class="topic-grid">'+ids.map(id=>{const e=map.get(id);return e?'<button class="topic-card" data-topic="'+esc(id)+'"><span>'+esc(e.title)+'</span><small>'+uniquePages(e.pages).length+' صفحه مرتبط</small></button>':""}).join("")+'</div></section>').join("");
   box.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>showRepair(b.dataset.topic));
   $("#status").textContent="موضوعات آماده است";

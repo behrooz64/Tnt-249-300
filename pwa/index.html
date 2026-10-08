@@ -132,6 +132,25 @@
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.10.0/dist/js/adminlte.min.js"></script>
 <script src="app.js?v=20261008-home-breadcrumb-1"></script>
 <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', async () => {
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const registration of registrations) {
+        await registration.unregister();
+      }
+      if (window.caches) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(key => caches.delete(key)));
+      }
+    } catch (e) {
+      console.warn('Cache cleanup:', e);
+    }
+  });
+}
+</script>
+
+<script>
 function goHome(){
   const q=document.querySelector('#q');
   if(q) q.value='';

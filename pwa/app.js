@@ -315,7 +315,7 @@ async function showManualPage(n,lang){
   const fa=lang==="fa",pad=String(p).padStart(4,"0"),url="./docs/manual-pages/page-"+pad+".md";
   let raw="";
   try{const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw Error(r.status);raw=await r.text()}catch(e){raw=""}
-  const notesMatch=raw.match(/## Persian notes\\s*([\\s\\S]*?)(?:\\n## |$)/i);
+  const notesMatch=raw.match(/## Persian notes\s*([\s\S]*?)(?:\n## |$)/i);
   const notes=notesMatch?notesMatch[1].trim():"";
   const image="./docs/images/pages/page-"+pad+".png";
   const body=fa

@@ -28,9 +28,9 @@ function page(n){return manual.find(x=>x.page===Number(n))}
 function imgPath(p){const s=String(p||"").trim();if(/^https?:\/\//i.test(s))return s;return "./"+s.replace(/^\.\//,"")}
 function uniquePages(pages){return [...new Set((pages||[]).map(Number).filter(Boolean))].sort((a,b)=>a-b)}
 function showPDF(n){
-  const e=page(n),v=$("#pdfViewer"); if(!e)return;
-  const img=(e.images||[]).find(x=>/docs\/images\/pages\/page-\d+\.png$/i.test(x)) || (e.images||[])[0];
-  v.innerHTML='<div class="pdf-top"><button id="closePdf">← بستن</button><span>صفحه '+e.page+'</span></div>'+(img?'<img class="pdf-page" src="'+imgPath(img)+'" alt="صفحه اصلی PDF '+e.page+'">':'<div class="empty">تصویر این صفحه موجود نیست.</div>');
+  const p=Number(n),v=$("#pdfViewer"); if(!p)return;
+  const pad=String(p).padStart(4,"0"),img="./docs/images/pages/page-"+pad+".png";
+  v.innerHTML='<div class="pdf-top"><button id="closePdf">← بستن</button><span>صفحه '+p+'</span></div><img class="pdf-page" src="'+img+'" alt="صفحه اصلی PDF '+p+'">';
   v.classList.remove("hidden"); document.body.classList.add("modal-open");
   $("#closePdf").onclick=closePDF; v.scrollIntoView({behavior:"smooth",block:"start"});
 }
@@ -55,10 +55,21 @@ function renderCategories(){
   box.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>showRepair(b.dataset.topic));
   $("#status").textContent="";
 }
+const repairStepPages={"no-start":[[376,377,378],[408],[403,404,405,406,407],[486,487]],"crank-no-start":[[399,400,401],[358,359,360,361,362,363,364],[397],[368,369,370,371,372,373],[424,425,426,427,428]],"rough-low-rpm":[[440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463],[399,400,401],[358,359,360,361,362,363,364,365],[365,366,367,368],[365,366,367,368],[368,369,370,371,372,373],[397,424,425,426,427,428,430,431,433,435,437,440]],"fuel-pressure":[[353,354,355,356,357,358,359,360,361,362,363,364,365],[364],[358,359,360,361,362,363,364],[353,354,355,356,357,364,365]],"throttle-tps-idle":[[365,366,367,368],[366,367,368],[368,420],[365,366,367,368,420]],"injector":[[368,369],[369,370,371],[369,370,371,372,373],[373]],"overheat":[[332,333,334,335,336],[336,337,338],[340,341,342,343,344],[345,346],[347],[348],[349]],"oil-pressure":[[272],[273],[275],[277],[278],[279]],"valve-compression":[[72],[240],[250],[254]],"battery-charging":[[376,377,378],[381,382,383,384,385],[386,387,388,389],[486,487]],"sensors-efi":[[397],[424,425,426,427,428],[433],[348],[435],[424,425,426,427,428],[437,440]],"dtc":[[440],[441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463],[440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463],[440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463],[440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463],[440,441,442,443,444,445,446,447,448,449,450,451,452,453,454,455,456,457,458,459,460,461,462,463]],"brakes":[[76],[78],[83],[84],[76,78,83,84]],"chain-chassis":[[85,86],[87,88,89,90],[91],[92],[93],[173,174,181,182,183,184,185,186,187]]};
+function repairPageButtons(pages){
+  return uniquePages(pages).map(p=>'<button class="page-chip" data-pdf="'+p+'">صفحه PDF '+p+'</button>').join("");
+}
 function showRepair(id){
   const e=repairs.find(x=>x.id===id);if(!e)return;
-  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت به موضوعات</button></div><div class="detail-head"><div class="eyebrow">موضوع تعمیر</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div></div><section><h3>مسیر بررسی</h3><ol>'+(e.steps||[]).map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol></section><section><h3>صفحات مرتبط دفترچه</h3><div class="page-list">'+uniquePages(e.pages).map(p=>'<button class="page-chip" data-pdf="'+p+'">صفحه '+p+'</button>').join("")+'</div></section><section class="pdf-link"><h3>دفترچه اصلی</h3><p>برای دیدن خود صفحه، بدون توضیح اضافه:</p>'+pdfButtons(e.pages)+'</section>';
-  $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();
+  const groups=repairStepPages[e.id]||[];
+  const steps=(e.steps||[]).map((s,i)=>{
+    const pages=groups[i]||[];
+    return '<article class="repair-step-card"><div class="repair-step-title"><span class="repair-step-num">'+(i+1)+'</span><h4>'+esc(s)+'</h4></div><p class="repair-step-note">توضیحات فارسی و صفحه مرجع این بخش از دفترچه:</p><div class="page-list">'+repairPageButtons(pages)+'</div><div class="repair-step-actions">'+uniquePages(pages).map(p=>'<button class="pdf-btn" data-manual-page="'+p+'" data-manual-lang="fa">توضیحات فارسی · صفحه '+p+'</button><button class="pdf-btn" data-manual-page="'+p+'" data-manual-lang="en">راهنمای انگلیسی · صفحه '+p+'</button>').join("")+'</div></article>';
+  }).join("");
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت به موضوعات</button></div><div class="detail-head"><div class="eyebrow">موضوع تعمیر</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div></div><section><h3>مسیر بررسی</h3><div class="repair-steps">'+steps+'</div></section><section><h3>همه صفحات مرتبط</h3><div class="page-list">'+repairPageButtons(e.pages)+'</div></section>';
+  $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;
+  bindPDF();
+  document.querySelectorAll("[data-manual-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.manualPage,b.dataset.manualLang));
   setPageHeader(e.title,"تعمیرات › "+e.title);
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -256,10 +267,10 @@ function showManualDirectory(lang){
       "TNT300 Circuit Diagram (Chinese Market)":"نقشه مدار TNT300 (بازار چین)","TNT300 Circuit Diagram (EURO-STANDARD)":"نقشه مدار TNT300 (استاندارد اروپا)"
     };
     const entries=manualTocEntries();
-    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>راهنمای کامل فارسی</h2></div><span class="manual-count">'+entries.length+' مورد</span></div><div class="manual-toc-list">'+entries.map(e=>{const pdfPage=Number(e[1]);const sourcePage=pdfPage+1;return '<button class="manual-toc-item" style="direction:rtl;grid-template-columns:auto 1fr;text-align:right" data-manual-page="'+sourcePage+'" data-manual-lang="fa"><strong>'+pdfPage+'</strong><span>'+esc(titleMap[e[0]]||e[0])+'</span></button>'}).join("")+'</div></div>';
+    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>راهنمای کامل فارسی</h2></div><span class="manual-count">'+entries.length+' مورد</span></div><div class="manual-toc-list">'+entries.map(e=>{const pdfPage=Number(e[1])+1;return '<button class="manual-toc-item" style="direction:rtl;grid-template-columns:auto 1fr;text-align:right" data-manual-page="'+pdfPage+'" data-manual-lang="fa"><strong>'+pdfPage+'</strong><span>'+esc(titleMap[e[0]]||e[0])+'</span></button>'}).join("")+'</div></div>';
   }else{
     const entries=manualTocEntries();
-    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>فهرست راهنمای کامل انگلیسی</h2></div></div><div class="manual-toc-list">'+entries.map(e=>{const title=e[0],p=e[1],display=e[2]??p;return '<button class="manual-toc-item" data-manual-page="'+(Number(p)+1)+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+display+'</strong></button>'}).join("")+'</div></div>';
+    box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><h2>فهرست راهنمای کامل انگلیسی</h2></div></div><div class="manual-toc-list">'+entries.map(e=>{const title=e[0],p=Number(e[1])+1;return '<button class="manual-toc-item" data-manual-page="'+p+'" data-manual-lang="en"><span>'+esc(title)+'</span><strong>'+p+'</strong></button>'}).join("")+'</div></div>';
   }
   box.querySelectorAll("[data-manual-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.manualPage,b.dataset.manualLang));
   setPageHeader(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی",fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی");
@@ -299,18 +310,21 @@ function formatPersianNotes(raw){
   return out.join("")||"<p>برای این صفحه توضیح فارسی ثبت نشده است.</p>";
 }
 
-function showManualPage(n,lang){
-  const e=page(n); if(!e)return;
-  const fa=lang==="fa", imgs=(e.images||[]).filter(Boolean);
-  const displayPage=fa ? Math.max(1,Number(e.page)-1) : Number(e.page);
-  const imageHtml=imgs.map(src=>'<img class="manual-page-image" src="'+imgPath(src)+'" alt="صفحه '+displayPage+'" loading="lazy">').join("");
+async function showManualPage(n,lang){
+  const p=Number(n); if(!p)return;
+  const fa=lang==="fa",pad=String(p).padStart(4,"0"),url="./docs/manual-pages/page-"+pad+".md";
+  let raw="";
+  try{const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw Error(r.status);raw=await r.text()}catch(e){raw=""}
+  const notesMatch=raw.match(/## Persian notes\\s*([\\s\\S]*?)(?:\\n## |$)/i);
+  const notes=notesMatch?notesMatch[1].trim():"";
+  const image="./docs/images/pages/page-"+pad+".png";
   const body=fa
-    ? '<section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl">'+formatPersianNotes(e.notes)+'</div></section><section><h3>تصاویر</h3><div class="manual-images">'+(imageHtml||'<div class="empty">تصویر موجود نیست.</div>')+'</div></section><section class="pdf-link"><h3>صفحه اصلی انگلیسی</h3><button class="pdf-btn" data-pdf="'+e.page+'">مشاهده صفحه PDF اصلی · '+displayPage+'</button></section>'
-    : '<section><h3>صفحه اصلی دفترچه</h3><div class="manual-images">'+(imageHtml||'<div class="empty">تصویر این صفحه موجود نیست.</div>')+'</div></section>';
-  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backManual">← بازگشت</button></div><div class="detail-head"><div class="eyebrow">'+(fa?"راهنمای فارسی":"راهنمای انگلیسی")+'</div><h2>صفحه '+displayPage+'</h2></div>'+body;
-  $("#results").classList.add("hidden"); $("#detail").classList.remove("hidden");
+    ? '<section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl">'+formatPersianNotes(notes)+'</div></section><section><h3>تصویر صفحه</h3><div class="manual-images"><img class="manual-page-image" src="'+image+'" alt="صفحه '+p+'" loading="lazy"></div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3><button class="pdf-btn" data-pdf="'+p+'">مشاهده صفحه PDF اصلی · '+p+'</button></section>'
+    : '<section><h3>صفحه اصلی دفترچه</h3><div class="manual-images"><img class="manual-page-image" src="'+image+'" alt="صفحه '+p+'" loading="lazy"></div></section>';
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backManual">← بازگشت</button></div><div class="detail-head"><div class="eyebrow">'+(fa?"راهنمای فارسی":"راهنمای انگلیسی")+'</div><h2>صفحه '+p+'</h2></div>'+body;
+  $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");
   $("#backManual").onclick=()=>showManualDirectory(lang);
-  bindPDF(); setPageHeader("صفحه "+displayPage,(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی")+" › صفحه "+displayPage);
+  bindPDF();setPageHeader("صفحه "+p,(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی")+" › صفحه "+p);
   window.scrollTo({top:0,behavior:"smooth"});
 }
 

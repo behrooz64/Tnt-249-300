@@ -82,6 +82,20 @@ function showManualDirectory(lang){
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
+function showManualPage(n,lang){
+  const e=page(n); if(!e)return;
+  const fa=lang==="fa", imgs=(e.images||[]).filter(Boolean);
+  const imageHtml=imgs.map(src=>'<img class="manual-page-image" src="'+imgPath(src)+'" alt="صفحه '+e.page+'" loading="lazy">').join("");
+  const body=fa
+    ? '<section><h3>توضیحات فارسی</h3><div class="fa-note">'+esc(e.notes||"برای این صفحه توضیح فارسی ثبت نشده است.")+'</div></section><section><h3>تصاویر</h3><div class="manual-images">'+(imageHtml||'<div class="empty">تصویر موجود نیست.</div>')+'</div></section><section class="pdf-link"><h3>صفحه اصلی انگلیسی</h3>'+pdfButtons([e.page])+'</section>'
+    : '<section><h3>صفحه اصلی دفترچه</h3><div class="manual-images">'+(imageHtml||'<div class="empty">تصویر موجود نیست.</div>')+'</div></section>';
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backManual">← بازگشت</button></div><div class="detail-head"><div class="eyebrow">'+(fa?"راهنمای فارسی":"راهنمای انگلیسی")+'</div><h2>صفحه '+e.page+'</h2></div>'+body;
+  $("#results").classList.add("hidden"); $("#detail").classList.remove("hidden");
+  $("#backManual").onclick=()=>showManualDirectory(lang);
+  bindPDF(); setPageHeader("صفحه "+e.page,(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی")+" › صفحه "+e.page);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
 function search(){
   const q=norm($("#q").value),mode=document.querySelector(".filters .active").dataset.filter;
   if(!q){renderHome(mode);return}

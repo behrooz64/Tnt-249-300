@@ -156,7 +156,7 @@ function showManualDirectory(lang){
   document.querySelectorAll(".manual-lang-btn").forEach(x=>x.classList.toggle("active",x.dataset.manualLang===lang));
   if(fa){
     const titleMap={
-      "Preface":"پیشگفتار","User Guide":"راهنمای کاربر","Exhaust Emission Control Information":"اطلاعات کنترل انتشار آلاینده‌های اگزوز",
+      "Preface":"پیشگفتار","Important Information in This Maintenance Manual":"اطلاعات مهم در این دفترچه تعمیر و نگهداری","User Guide":"راهنمای کاربر","Exhaust Emission Control Information":"اطلاعات کنترل انتشار آلاینده‌های اگزوز",
       "Symbols":"علائم","Specific Symbols":"علائم اختصاصی","Symbol Interpretation":"تفسیر علائم","Content":"محتوا",
       "Contents":"فهرست مطالب","Chapter I General Information":"فصل اول اطلاعات عمومی","General Safety":"ایمنی عمومی",
       "Identification":"شناسایی","Motorcycle Identification":"شناسایی موتورسیکلت","Important Parts":"قطعات مهم",

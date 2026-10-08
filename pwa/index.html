@@ -152,7 +152,7 @@ function setTheme(dark){
 }
 setTheme(localStorage.getItem('tnt249-theme')==='dark');
 darkBtn?.addEventListener('click',()=>setTheme(document.body.getAttribute('data-bs-theme')!=='dark'));
-document.querySelectorAll('.filters-btn').forEach('.filters-btn').forEach(btn => btn.addEventListener('click', () => {
+document.querySelectorAll('.filters-btn').forEach(btn => btn.addEventListener('click', () => {
   const target = document.querySelector('.filters button[data-filter="'+btn.dataset.filter+'"]');
   if (target) target.click();
   document.querySelectorAll('.filters-btn').forEach(x => x.classList.remove('active'));

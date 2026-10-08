@@ -70,6 +70,18 @@ function showManualPage(n){
   setPageHeader("صفحه "+e.page,"دفترچه › صفحه "+e.page);
   window.scrollTo({top:0,behavior:"smooth"});
 }
+function showManualDirectory(lang){
+  const fa=lang==="fa", box=$("#results");
+  $("#detail").classList.add("hidden"); $("#pdfViewer").classList.add("hidden"); box.classList.remove("hidden");
+  document.querySelectorAll(".filters-btn").forEach(x=>x.classList.remove("active"));
+  document.querySelectorAll(".manual-lang-btn").forEach(x=>x.classList.toggle("active",x.dataset.manualLang===lang));
+  const pages=uniquePages(manual.map(x=>x.page));
+  box.innerHTML='<div class="manual-directory"><div class="manual-directory-head"><div><div class="eyebrow">'+(fa?"نسخه فارسی":"نسخه اصلی")+'</div><h2>'+(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی")+'</h2><p>'+(fa?"صفحات با توضیحات فارسی و تصاویر.":"صفحات اصلی دفترچه.")+'</p></div><span class="manual-count">'+pages.length+' صفحه</span></div><div class="manual-page-grid">'+pages.map(p=>'<button class="manual-page-item" data-manual-page="'+p+'" data-manual-lang="'+lang+'">صفحه '+p+' <i class="bi bi-chevron-left"></i></button>').join("")+'</div></div>';
+  box.querySelectorAll("[data-manual-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.manualPage,b.dataset.manualLang));
+  setPageHeader(fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی",fa?"راهنمای کامل فارسی":"راهنمای کامل انگلیسی");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
 function search(){
   const q=norm($("#q").value),mode=document.querySelector(".filters .active").dataset.filter;
   if(!q){renderHome(mode);return}
@@ -102,4 +114,5 @@ function renderHome(mode){
 }
 async function load(url){const r=await fetch(url,{cache:"no-store"});if(!r.ok)throw Error(r.status);return r.json()}
 async function init(){try{const[m,r,s]=await Promise.all([load("./data/manual-index.json?v=20261007"),load("./data/repair-index.json?v=20261007"),load("./data/repair-specs.json?v=20261007")]);manual=m.pages||m;repairs=Array.isArray(r)?r:r.entries||[];specs=Array.isArray(s)?s:s.entries||[];renderHome("home")}catch(e){$("#status").textContent="خطا در بارگذاری داده‌ها: "+e.message}}
+document.querySelectorAll(".manual-lang-btn").forEach(b=>b.onclick=()=>showManualDirectory(b.dataset.manualLang));
 $("#q").addEventListener("input",search);$("#q").addEventListener("keydown",e=>{if(e.key==="Enter")search()});$("#clear").onclick=()=>{$("#q").value="";search();$("#q").focus()};document.querySelectorAll(".filters button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filters button").forEach(x=>x.classList.remove("active"));b.classList.add("active");$("#q").value="";renderHome(b.dataset.filter)});$("#pdfViewer").addEventListener("click",e=>{if(e.target.id==="pdfViewer")closePDF()});init();

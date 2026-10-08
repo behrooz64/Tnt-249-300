@@ -147,6 +147,7 @@ function goHome(){
   document.querySelector('#pdfViewer')?.classList.add('hidden');
   document.querySelector('#results')?.classList.remove('hidden');
   if(typeof renderHome==='function') renderHome('home');
+  if(typeof setPageHeader==='function') setPageHeader('راهنمای تعمیر Benelli TNT 249','خانه');
   document.querySelectorAll('.filters-btn').forEach(x=>x.classList.toggle('active',x.dataset.filter==='home'));
   window.scrollTo({top:0,behavior:'smooth'});
 }

@@ -43,3 +43,20 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
 @media (max-width:380px){
   .topic-grid{grid-template-columns:1fr}
 }
+
+/* Home controls: keep sidebar layout unchanged */
+#homeHeader{color:inherit;cursor:pointer;padding:0;text-decoration:none}
+#homeHeader:hover{opacity:.8}
+#darkModeToggle{width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-size:1.05rem}
+.search-group{height:48px}
+.search-group .input-group-text,
+.search-group .form-control,
+.search-group #clear{font-size:15px;font-family:inherit}
+.search-group .input-group-text{padding:.65rem .8rem}
+.search-group .form-control{height:48px}
+.search-group #clear{height:48px;padding:.5rem .9rem;white-space:nowrap}
+@media (max-width:575.98px){
+  .search-group{height:46px}
+  .search-group .form-control,.search-group #clear{height:46px;font-size:14px}
+  .search-group .input-group-text{padding:.55rem .7rem}
+}

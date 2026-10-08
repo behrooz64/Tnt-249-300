@@ -274,24 +274,25 @@ function formatPersianInline(s){
 function formatPersianNotes(raw){
   const lines=String(raw||"").replace(/\r/g,"").split(/\n/);
   const out=[];
-  const pushSentence=s=>{
-    const t=s.trim();
-    if(t) out.push("<p>"+formatPersianInline(t)+"</p>");
-  };
+  const push=s=>{const t=s.trim();if(t)out.push("<p>"+formatPersianInline(t)+"</p>");};
   lines.forEach(line=>{
     let t=line.trim();
     if(!t)return;
     const h=t.match(/^#{3,6}\s+(.+)$/);
     if(h){out.push("<h4>"+formatPersianInline(h[1])+"</h4>");return;}
+    const protectedBold=[];
+    t=t.replace(/\*\*(.+?)\*\*/g,m=>{protectedBold.push(m);return "__BOLD_"+(protectedBold.length-1)+"__";});
     t=t.replace(/\s*\/\s*/g,"\n").replace(/\s*\*\s*/g,"\n");
     t.split(/\n+/).forEach(part=>{
-      const p=part.trim();
+      let p=part.trim();
       if(!p)return;
-      if(/^\d+[.)]\s+/.test(p)){pushSentence(p);return;}
-      p.split(/\.\s+/).forEach((sentence,index)=>{
+      p=p.replace(/__BOLD_(\d+)__/g,(_,i)=>protectedBold[Number(i)]);
+      if(/^\d+[.)]\s+/.test(p)){push(p);return;}
+      const sentences=p.split(/\.\s+(?=[^\d])/);
+      sentences.forEach((sentence,i)=>{
         const s=sentence.trim();
         if(!s)return;
-        pushSentence(index<p.split(/\.\s+/).length-1 ? s+"." : s);
+        push(i<sentences.length-1?s+".":s);
       });
     });
   });
@@ -304,7 +305,7 @@ function showManualPage(n,lang){
   const displayPage=fa ? Math.max(1,Number(e.page)-1) : Number(e.page);
   const imageHtml=imgs.map(src=>'<img class="manual-page-image" src="'+imgPath(src)+'" alt="صفحه '+displayPage+'" loading="lazy">').join("");
   const body=fa
-    ? '<section><h3>توضیحات فارسی</h3><div class="fa-note">'+esc(e.notes||"برای این صفحه توضیح فارسی ثبت نشده است.")+'</div></section><section><h3>تصاویر</h3><div class="manual-images">'+(imageHtml||'<div class="empty">تصویر موجود نیست.</div>')+'</div></section><section class="pdf-link"><h3>صفحه اصلی انگلیسی</h3><button class="pdf-btn" data-pdf="'+e.page+'">مشاهده صفحه PDF اصلی · '+displayPage+'</button></section>'
+    ? '<section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl">'+formatPersianNotes(e.notes)+'</div></section><section><h3>تصاویر</h3><div class="manual-images">'+(imageHtml||'<div class="empty">تصویر موجود نیست.</div>')+'</div></section><section class="pdf-link"><h3>صفحه اصلی انگلیسی</h3><button class="pdf-btn" data-pdf="'+e.page+'">مشاهده صفحه PDF اصلی · '+displayPage+'</button></section>'
     : '<section><h3>صفحه اصلی دفترچه</h3><div class="manual-images">'+(imageHtml||'<div class="empty">تصویر این صفحه موجود نیست.</div>')+'</div></section>';
   $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backManual">← بازگشت</button></div><div class="detail-head"><div class="eyebrow">'+(fa?"راهنمای فارسی":"راهنمای انگلیسی")+'</div><h2>صفحه '+displayPage+'</h2></div>'+body;
   $("#results").classList.add("hidden"); $("#detail").classList.remove("hidden");

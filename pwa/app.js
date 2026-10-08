@@ -1,4 +1,19 @@
 const $=s=>document.querySelector(s);
+function goHome(){
+  const q=$("#q");
+  if(q) q.value="";
+  $("#detail")?.classList.add("hidden");
+  $("#pdfViewer")?.classList.add("hidden");
+  $("#results")?.classList.remove("hidden");
+  document.body.classList.remove("modal-open");
+  document.querySelectorAll(".filters .active").forEach(x=>x.classList.remove("active"));
+  const homeFilter=document.querySelector('.filters button[data-filter="home"]');
+  if(homeFilter) homeFilter.classList.add("active");
+  document.querySelectorAll(".filters-btn").forEach(x=>x.classList.toggle("active",x.dataset.filter==="home"));
+  renderHome("home");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
 let manual=[],repairs=[],specs=[];
 const norm=s=>String(s||"").toLowerCase().replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/ۀ/g,"ه").replace(/[\u200c\u200d]/g," ").replace(/[،؛:؟!.,;:()\[\]{}\/\\]/g," ").replace(/\s+/g," ").trim();
 const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -14,7 +29,7 @@ function showPDF(n){
 }
 function closePDF(){$("#pdfViewer").classList.add("hidden");document.body.classList.remove("modal-open")}
 function pdfButtons(pages){return uniquePages(pages).map(p=>'<button class="pdf-btn" data-pdf="'+p+'">مشاهده صفحه PDF اصلی · '+p+'</button>').join("")}
-function bindPDF(){document.querySelectorAll("[data-pdf]").forEach(b=>b.onclick=()=>showPDF(b.dataset.pdf))}
+function bindPDF(){document.querySelectorAll("[data-pdf]").forEach(b=>b.onclick=()=>showPDF(b.dataset.pdf));document.querySelectorAll("[data-home]").forEach(b=>b.onclick=goHome)}
 function renderCategories(){
   const groups=[
     ["موتور و مکانیک",["valve-compression","oil-pressure"]],
@@ -32,13 +47,13 @@ function renderCategories(){
 }
 function showRepair(id){
   const e=repairs.find(x=>x.id===id);if(!e)return;
-  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" onclick="goHome()"><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت به موضوعات</button><div class="detail-head"><div class="eyebrow">موضوع تعمیر</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div></div><section><h3>مسیر بررسی</h3><ol>'+(e.steps||[]).map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol></section><section><h3>صفحات مرتبط دفترچه</h3><div class="page-list">'+uniquePages(e.pages).map(p=>'<button class="page-chip" data-pdf="'+p+'">صفحه '+p+'</button>').join("")+'</div></section><section class="pdf-link"><h3>دفترچه اصلی</h3><p>برای دیدن خود صفحه، بدون توضیح اضافه:</p>'+pdfButtons(e.pages)+'</section>';
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت به موضوعات</button><div class="detail-head"><div class="eyebrow">موضوع تعمیر</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div></div><section><h3>مسیر بررسی</h3><ol>'+(e.steps||[]).map(x=>'<li>'+esc(x)+'</li>').join("")+'</ol></section><section><h3>صفحات مرتبط دفترچه</h3><div class="page-list">'+uniquePages(e.pages).map(p=>'<button class="page-chip" data-pdf="'+p+'">صفحه '+p+'</button>').join("")+'</div></section><section class="pdf-link"><h3>دفترچه اصلی</h3><p>برای دیدن خود صفحه، بدون توضیح اضافه:</p>'+pdfButtons(e.pages)+'</section>';
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();window.scrollTo({top:0,behavior:"smooth"});
 }
-function closeDetail(){$("#detail").classList.add("hidden");$("#results").classList.remove("hidden");renderHome()}
+function closeDetail(){$("#detail").classList.add("hidden");$("#results").classList.remove("hidden");renderHome("home")}
 function showManualPage(n){
   const e=page(n);if(!e)return;
-  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" onclick="goHome()"><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>صفحه '+e.page+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note">'+esc(e.notes||"برای این صفحه توضیح فارسی ثبت نشده است.")+'</div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3>'+pdfButtons([e.page])+'</section>';
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>صفحه '+e.page+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note">'+esc(e.notes||"برای این صفحه توضیح فارسی ثبت نشده است.")+'</div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3>'+pdfButtons([e.page])+'</section>';
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();window.scrollTo({top:0,behavior:"smooth"});
 }
 function search(){

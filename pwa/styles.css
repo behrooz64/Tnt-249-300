@@ -114,3 +114,11 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
 @media (max-width:575.98px){.manual-toc-item{grid-template-columns:1fr auto;gap:.6rem;padding:.62rem .65rem;font-size:.9rem}.manual-toc-item strong{min-width:2.6rem}}
 
 .manual-toc-section{margin-top:1rem}.manual-toc-section h3{margin:.25rem 0 .65rem;font-size:1rem}.manual-toc-section+.manual-toc-section{padding-top:1rem;border-top:1px solid var(--bs-border-color)}
+
+.repair-steps{display:grid;gap:.8rem}
+.repair-step-card{border:1px solid var(--bs-border-color);border-radius:.7rem;padding:.85rem;background:var(--bs-secondary-bg)}
+.repair-step-title{display:flex;align-items:center;gap:.6rem}
+.repair-step-title h4{margin:0;font-size:1rem}
+.repair-step-num{display:inline-flex;align-items:center;justify-content:center;min-width:2rem;height:2rem;border-radius:50%;background:var(--bs-body-bg);border:1px solid var(--bs-border-color);font-weight:700}
+.repair-step-note{margin:.55rem 0;color:var(--bs-secondary-color);font-size:.9rem}
+.repair-step-actions{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.55rem}

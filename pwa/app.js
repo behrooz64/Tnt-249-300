@@ -65,7 +65,7 @@ function showRepair(id){
 function closeDetail(){$("#detail").classList.add("hidden");$("#results").classList.remove("hidden");renderHome("home");setPageHeader("راهنمای تعمیر Benelli TNT 249","خانه")}
 function showManualPage(n){
   const e=page(n);if(!e)return;
-  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>صفحه '+e.page+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl" style="text-align:right;line-height:2">formatPersianNotes(e.notes)</div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3>'+pdfButtons([e.page])+'</section>';
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>صفحه '+e.page+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl" style="text-align:right;line-height:2">'+formatPersianNotes(e.notes)+'</div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3>'+pdfButtons([e.page])+'</section>';
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();
   setPageHeader("صفحه "+e.page,"دفترچه › صفحه "+e.page);
   window.scrollTo({top:0,behavior:"smooth"});

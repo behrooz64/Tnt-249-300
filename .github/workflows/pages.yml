@@ -32,6 +32,7 @@ jobs:
           cp -R docs site/docs
           cp -R data site/data
           node scripts/build-seo-pages.js
+          node scripts/audit-seo-build.js
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site

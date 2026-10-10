@@ -80,6 +80,17 @@ function initTntHome(){
     }
     ['#status','#results'].forEach(s=>{const x=main.querySelector(s);if(x)x.style.display='';});
   }
+  const searchInput=document.querySelector('#q');
+  searchInput?.addEventListener('input',function(){
+    const hasQuery=!!searchInput.value.trim();
+    ['#status','#results'].forEach(s=>{const x=main.querySelector(s);if(x)x.style.display=hasQuery?'':'none';});
+  },true);
+  document.querySelector('#clear')?.addEventListener('click',function(e){
+    if(landing.style.display!=='block')return;
+    e.preventDefault();e.stopImmediatePropagation();
+    if(searchInput){searchInput.value='';searchInput.dispatchEvent(new Event('input',{bubbles:true}));searchInput.focus();}
+    ['#status','#results'].forEach(s=>{const x=main.querySelector(s);if(x)x.style.display='none';});
+  },true);
   document.addEventListener('click',function(e){
     const hint=e.target.closest('[data-home-query]');
     if(hint){

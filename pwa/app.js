@@ -49,7 +49,41 @@ history.replaceState({tnt249:true,view:"home",mode:"home"},"",location.href);
 window.addEventListener("popstate",e=>restoreViewState(e.state));
 
 let manual=[],repairs=[],specs=[];
-const norm=s=>String(s||"").toLowerCase().replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/ۀ/g,"ه").replace(/[\u200c\u200d]/g," ").replace(/[،؛:؟!.,;:()\[\]{}\/\\]/g," ").replace(/\s+/g," ").trim();
+const norm=s=>String(s||"").toLowerCase().replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/ۀ/g,"ه").replace(/[\u200c\u200d]/g," ").replace(/[۰-۹]/g,d=>String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))).replace(/[٠-٩]/g,d=>String("٠١٢٣٤٥٦٧٨٩".indexOf(d))).replace(/[،؛:؟!.,;:()\[\]{}\/\\]/g," ").replace(/\s+/g," ").trim();
+const SEARCH_ALIASES={
+  "غلظت روغن":"گرانروی روغن","ویسکوزیته روغن":"گرانروی روغن","روغن ۱۰ ۴۰":"روغن 10w40","روغن 10 40":"روغن 10w40",
+  "باطری":"باتری","باتری خالی":"باتری ضعیف","شارژ نشدن باتری":"سیستم شارژ","شارژ دینام":"سیستم شارژ","برق ندادن دینام":"سیستم شارژ",
+  "فیلرگیری":"لقی سوپاپ","فیلر سوپاپ":"لقی سوپاپ","تنظیم سوپاپ":"لقی سوپاپ","صدای سوپاپ":"لقی سوپاپ",
+  "فشار سیلندر":"کمپرس موتور","کمپرس کم":"کمپرس موتور","تایم موتور":"زنجیر تایم","صدای زنجیر تایم":"زنجیر تایم",
+  "رینگ پیستون":"پیستون","دود کردن موتور":"روغن سوزی","روغن سوزی":"روغن سوزی",
+  "استارت نمی زند":"استارت","استارت نمی‌زند":"استارت","موتور روشن نمی شود":"روشن نشدن موتور","استارت کار نمی کند":"استارت",
+  "زغال موتور":"زغال استارت","زغال آرمیچر":"زغال استارت","برس استارت":"زغال استارت","اتومات استارت":"رله استارت","رله تق تق می کند":"رله استارت",
+  "ایسیو":"ecu","ارور موتور":"خطای ecu","چراغ چک":"خطای ecu","کد خطا":"خطای ecu",
+  "پمپ بنزین کار نمی کند":"پمپ بنزین","صدای پمپ":"پمپ بنزین","فشار بنزین":"فشار سوخت",
+  "سوزن انژکتور":"انژکتور","انژکتور کثیف":"انژکتور","پاشش بنزین":"انژکتور",
+  "سنسور دریچه گاز":"tps","سنسور گاز":"tps","گاز خوردن":"دریچه گاز","گیر کردن گاز":"دریچه گاز","گاز نخوردن":"دریچه گاز",
+  "دور موتور درجا":"دور آرام","تنظیم دور موتور":"دور آرام","گاز درجا":"دور آرام",
+  "ریپ می زند":"ریپ زدن","تته پته کردن موتور":"ریپ زدن","بد کار کردن":"ریپ زدن",
+  "دیر روشن شدن":"روشن نشدن موتور","خاموشی ناگهانی":"خاموش شدن موتور","گاز را رها می کنم خاموش می شود":"خاموش شدن موتور",
+  "جوش آوردن":"داغ کردن موتور","آمپر بالا":"داغ کردن موتور","موتور بیش از حد گرم می شود":"داغ کردن موتور",
+  "آب رادیاتور":"مایع خنک کننده","ضدیخ":"مایع خنک کننده","مایع رادیاتور":"مایع خنک کننده",
+  "ترموستات آب":"ترموستات","باز نکردن ترموستات":"ترموستات","نشتی رادیاتور":"رادیاتور","گرفتگی رادیاتور":"رادیاتور",
+  "پنکه رادیاتور":"فن رادیاتور","فن روشن نمی شود":"فن رادیاتور","پمپ آب":"واترپمپ","نشتی واترپمپ":"واترپمپ",
+  "صفحه کلاچ":"کلاچ","سیم کلاچ":"کلاچ","سفتی کلاچ":"کلاچ","کلاچ سر می خورد":"لغزش کلاچ",
+  "دنده جا نمی رود":"تعویض دنده","بد جا رفتن دنده":"تعویض دنده","زنجیر چرخ":"زنجیر","شل شدن زنجیر":"لقی زنجیر","تنظیم زنجیر":"لقی زنجیر",
+  "ترک پیچ":"گشتاور پیچ","نیوتن متر":"گشتاور پیچ","سفت کردن پیچ":"گشتاور پیچ",
+  "تمام شدن لنت":"لنت ترمز","صدای ترمز":"لنت ترمز","سوت کشیدن ترمز":"لنت ترمز","مایع ترمز":"روغن ترمز",
+  "تاب برداشتن دیسک":"دیسک ترمز","لرزش موقع ترمز":"دیسک ترمز","کمک جلو":"دوشاخ جلو","روغن ریزی دوشاخ":"دوشاخ جلو",
+  "کمک عقب":"کمک فنر","نشتی کمک":"کمک فنر","صدای چرخ":"بلبرینگ چرخ","لقی چرخ":"بلبرینگ چرخ",
+  "فشار تایر":"باد لاستیک","لاستیک کم باد":"باد لاستیک","لقی فرمان":"فرمان","سفتی فرمان":"فرمان","بلبرینگ فرمان":"فرمان",
+  "10w 40":"10w40","10 w 40":"10w40","tps سنسور":"tps","ecu خطا":"خطای ecu"
+};
+const aliasEntries=Object.entries(SEARCH_ALIASES).sort((a,b)=>b[0].length-a[0].length);
+function canonicalQuery(q){
+  let out=norm(q);
+  for(const [alias,canonical] of aliasEntries) out=out.replace(new RegExp("(^|\\\\s)"+alias.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\const norm=s=>String(s||"").toLowerCase().replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/ۀ/g,"ه").replace(/[\u200c\u200d]/g," ").replace(/[،؛:؟!.,;:()\[\]{}\/\\]/g," ").replace(/\s+/g," ").trim();")+"(?=\\\\s|$)","g"),(m,prefix)=>prefix+canonical);
+  return norm(out);
+}
 const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function page(n){return manual.find(x=>x.page===Number(n))}
 function imgPath(p){const s=String(p||"").trim();if(/^https?:\/\//i.test(s))return s;return "./"+s.replace(/^\.\//,"")}
@@ -384,7 +418,7 @@ async function showManualPage(n,lang,fromHistory=false){
 }
 
 function search(pushHistory=false){
-  const q=norm($("#q").value),mode=document.querySelector(".filters .active").dataset.filter;
+  const q=norm($("#q").value),searchQ=canonicalQuery(q),mode=document.querySelector(".filters .active").dataset.filter;
   if(!q){
     renderHome(mode);
     if(pushHistory) pushViewState({view:"home",mode});
@@ -392,9 +426,9 @@ function search(pushHistory=false){
   }
   if(history.state?.view==="search") replaceViewState({view:"search",q,mode});
   else pushViewState({view:"search",q,mode});
-  const terms=q.split(" ").filter(Boolean);
-  const repairResults=repairs.map(e=>({...e,score:score(e.title,terms,q,(e.keywords||[]).join(" "),(e.steps||[]).join(" "))})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
-  let r=manual.map(e=>({...e,score:score(e.title||"",terms,q,(e.notes||""),(e.text||""))})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
+  const terms=searchQ.split(" ").filter(Boolean);
+  const repairResults=repairs.map(e=>({...e,score:score(e.title,terms,searchQ,(e.keywords||[]).join(" "),(e.steps||[]).join(" "))})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
+  let r=manual.map(e=>({...e,score:score(e.title||"",terms,searchQ,(e.notes||""),(e.text||""))})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
   if(mode==="home"||mode==="repair"){
     renderCombinedSearchResults(repairResults,r);
     $("#status").textContent=(repairResults.length+r.length)+" نتیجه مرتبط";

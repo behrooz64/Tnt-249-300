@@ -393,8 +393,8 @@ function search(pushHistory=false){
   if(history.state?.view==="search") replaceViewState({view:"search",q,mode});
   else pushViewState({view:"search",q,mode});
   const terms=q.split(" ").filter(Boolean);
-  const repairResults=repairs.map(e=>({...e,score:score(e.title+" "+(e.keywords||[]).join(" ")+" "+(e.steps||[]).join(" "),terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
-  let r=manual.map(e=>({...e,score:score((e.title||"")+" "+(e.notes||"")+" "+(e.text||"")+" صفحه "+e.page,terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
+  const repairResults=repairs.map(e=>({...e,score:score(e.title,terms,q,(e.keywords||[]).join(" "),(e.steps||[]).join(" "))})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
+  let r=manual.map(e=>({...e,score:score(e.title||"",terms,q,(e.notes||""),(e.text||""))})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
   if(mode==="home"||mode==="repair"){
     renderCombinedSearchResults(repairResults,r);
     $("#status").textContent=(repairResults.length+r.length)+" نتیجه مرتبط";
@@ -406,7 +406,19 @@ function search(pushHistory=false){
   if(mode==="spec")r=r.filter(e=>/مشخصات|spec|torque|pressure|clearance|oil|mm|nm|psi|ولت|آمپر|مقدار/i.test((e.notes||"")+" "+e.text));
   renderManualResults(r);$("#status").textContent=r.length+" صفحه مرتبط";
 }
-function score(h,terms){const x=norm(h);let s=0;terms.forEach(t=>{if(x.includes(t))s+=x.indexOf(t)<120?3:1});return s}
+function score(title,terms,query,body="",extra=""){
+  const t=norm(title), b=norm(body), x=norm(extra), all=norm(t+" "+b+" "+x);
+  if(!terms.length||!terms.every(term=>all.includes(term)))return 0;
+  let s=0;
+  if(t.includes(query))s+=30;
+  else if(b.includes(query)||x.includes(query))s+=12;
+  terms.forEach(term=>{
+    if(t.includes(term))s+=8;
+    else if(b.includes(term))s+=3;
+    else if(x.includes(term))s+=2;
+  });
+  return s;
+}
 function manualResultTitle(e){
   const notes=String(e.notes||"");
   const heading=notes.match(/^\s*#{1,4}\s+(.+)$/m);

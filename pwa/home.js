@@ -8,7 +8,7 @@ function initTntHome(){
   if(!landing){
     landing=document.createElement('section');
     landing.id='homeLanding';
-    landing.innerHTML='<div class="home-hero"><img src="./docs/images/pages/page-0001.png" alt="موتور بنلی"><div><h2>راهنمای Benelli TNT 249</h2><p>دفترچه تعمیراتی دیجیتال</p></div></div><div class="home-choice-grid"><button type="button" data-home-choice="fa"><i class="bi bi-translate"></i><span><strong>راهنمای فارسی</strong><small>مطالب ترجمه‌شده دفترچه</small></span></button><button type="button" data-home-choice="en"><i class="bi bi-book"></i><span><strong>راهنمای انگلیسی</strong><small>صفحات اصلی دفترچه</small></span></button><button type="button" data-home-choice="repair"><i class="bi bi-wrench-adjustable"></i><span><strong>راهنمای بخش تعمیرات</strong><small>موضوعات تعمیراتی</small></span></button></div>';
+    landing.innerHTML='<div class="home-hero"><img src="https://d1uzk9o9cg136f.cloudfront.net/f/16782548/rc/2020/12/06/f5c8346b7c54d328c8d1865b5d5949afee8c0e1a_xlarge.jpg" alt="موتور بنلی"><div><h2>راهنمای Benelli TNT 249</h2><p>دفترچه تعمیراتی دیجیتال</p></div></div><div class="home-choice-grid"><button type="button" data-home-choice="fa"><i class="bi bi-translate"></i><span><strong>راهنمای فارسی</strong><small>مطالب ترجمه‌شده دفترچه</small></span></button><button type="button" data-home-choice="en"><i class="bi bi-book"></i><span><strong>راهنمای انگلیسی</strong><small>صفحات اصلی دفترچه</small></span></button><button type="button" data-home-choice="repair"><i class="bi bi-wrench-adjustable"></i><span><strong>راهنمای بخش تعمیرات</strong><small>موضوعات تعمیراتی</small></span></button></div>';
     const nav=main.querySelector('.search-navigation');
     main.insertBefore(landing,nav||main.firstChild);
   }

@@ -4,6 +4,7 @@ const path = require("path");
 const root = path.join(process.cwd(), "site");
 const base = "https://behrooz64.github.io/Tnt-249-300";
 const sitemapPath = path.join(root, "sitemap.xml");
+const textSitemapPath = path.join(root, "sitemap.txt");
 const robotsPath = path.join(root, "robots.txt");
 const errors = [];
 const checked = [];
@@ -22,6 +23,7 @@ function fileForUrl(url) {
   return path.join(root, clean, "index.html");
 }
 if (!fs.existsSync(sitemapPath)) fail("Missing sitemap.xml");
+if (!fs.existsSync(textSitemapPath)) fail("Missing sitemap.txt");
 if (!fs.existsSync(robotsPath)) fail("Missing robots.txt");
 
 let urls = [];

@@ -122,3 +122,12 @@ body{font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif}
 .repair-step-num{display:inline-flex;align-items:center;justify-content:center;min-width:2rem;height:2rem;border-radius:50%;background:var(--bs-body-bg);border:1px solid var(--bs-border-color);font-weight:700}
 .repair-step-note{margin:.55rem 0;color:var(--bs-secondary-color);font-size:.9rem}
 .repair-step-actions{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.55rem}
+
+
+/* Footer contact link */
+.app-footer{display:flex;align-items:flex-start;justify-content:space-between;gap:1.25rem;flex-wrap:wrap;padding:1.1rem 1rem;margin-top:1.5rem;border-top:1px solid var(--bs-border-color);background:var(--bs-body-bg);color:var(--bs-body-color)}
+.footer-brand{display:flex;flex-direction:column;gap:.25rem}.footer-model{font-size:.82rem;color:var(--bs-secondary-color)}
+.footer-contact{display:flex;flex-direction:column;align-items:flex-start;gap:.55rem;max-width:36rem;font-size:.88rem;color:var(--bs-secondary-color)}
+.footer-telegram{display:inline-flex;align-items:center;gap:.45rem;text-decoration:none;color:var(--bs-link-color);font-weight:600;padding:.45rem .7rem;border:1px solid var(--bs-border-color);border-radius:.65rem;background:var(--bs-tertiary-bg)}
+.footer-telegram:hover{background:var(--bs-secondary-bg);text-decoration:underline}.footer-telegram small{font-weight:400;opacity:.8}
+@media(max-width:575.98px){.app-footer{padding:1rem .75rem;gap:.85rem}.footer-contact{font-size:.84rem}}

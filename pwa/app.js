@@ -148,7 +148,7 @@ function showRepair(id,fromHistory=false){
   const groups=repairStepPages[e.id]||[];
   const steps=(e.steps||[]).map((s,i)=>{
     const pages=groups[i]||[];
-    return '<article class="repair-step-card"><div class="repair-step-title"><span class="repair-step-num">'+(i+1)+'</span><h4>'+esc(s)+'</h4></div><p class="repair-step-note">توضیحات فارسی و صفحه مرجع این بخش از دفترچه:</p><div class="repair-step-actions">'+uniquePages(pages).map(p=>'<button class="pdf-btn" data-manual-page="'+p+'" data-manual-lang="fa">توضیحات فارسی '+manualPageLabel(p)+'</button><button class="pdf-btn" data-pdf="'+p+'">'+pdfLabel(p)+'</button>').join("")+'</div></article>';
+    return '<article class="repair-step-card"><div class="repair-step-title"><span class="repair-step-num">'+(i+1)+'</span><h4>'+esc(s)+'</h4></div><div class="repair-step-actions">'+uniquePages(pages).map(p=>'<button class="pdf-btn" data-manual-page="'+p+'" data-manual-lang="fa">توضیحات فارسی '+manualPageLabel(p)+'</button><button class="pdf-btn" data-pdf="'+p+'">'+pdfLabel(p)+'</button>').join("")+'</div></article>';
   }).join("");
   $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت به موضوعات</button></div><div class="detail-head"><div class="eyebrow">موضوع تعمیر</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div></div><section><h3>مسیر بررسی</h3><div class="repair-steps">'+steps+'</div></section>';
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;
@@ -164,7 +164,7 @@ function closeDetail(fromHistory=false){
 function showManualPage(n,lang="",fromHistory=false){
   const e=page(n);if(!e)return;
   if(!fromHistory) pushViewState({view:"manual",page:e.page,lang:lang||"fa"});
-  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>'+manualPageLabel(e.page)+'</h2></div><section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl" style="text-align:right;line-height:2">'+formatPersianNotes(e.notes)+'</div></section><section class="pdf-link"><h3>صفحه اصلی</h3>'+pdfButtons([e.page])+'</section>';
+  $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backDetail">← بازگشت</button><div class="detail-head"><div class="eyebrow">دفترچه</div><h2>'+manualPageLabel(e.page)+'</h2></div><section><div class="fa-note" dir="rtl" style="text-align:right;line-height:2">'+formatPersianNotes(e.notes)+'</div></section><section class="pdf-link"><h3>صفحه اصلی</h3>'+pdfButtons([e.page])+'</section>';
   $("#results").classList.add("hidden");$("#detail").classList.remove("hidden");$("#backDetail").onclick=closeDetail;bindPDF();
   setPageHeader(manualPageLabel(e.page),"دفترچه › "+manualPageLabel(e.page));
   window.scrollTo({top:0,behavior:"smooth"});
@@ -409,7 +409,7 @@ async function showManualPage(n,lang,fromHistory=false){
   const notes=notesMatch?notesMatch[1].trim():"";
   const image="./docs/images/pages/page-"+pad+".png";
   const body=fa
-    ? '<section><h3>توضیحات فارسی</h3><div class="fa-note" dir="rtl">'+formatPersianNotes(notes)+'</div></section><section><h3>تصویر صفحه</h3><div class="manual-images"><img class="manual-page-image" src="'+image+'" alt="'+manualPageLabel(p)+'" loading="lazy"></div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3><button class="pdf-btn" data-pdf="'+p+'">صفحه اصلی '+manualPageNumber(p)+'</button></section>'
+    ? '<section><div class="fa-note" dir="rtl">'+formatPersianNotes(notes)+'</div></section><section><h3>تصویر صفحه</h3><div class="manual-images"><img class="manual-page-image" src="'+image+'" alt="'+manualPageLabel(p)+'" loading="lazy"></div></section><section class="pdf-link"><h3>صفحه اصلی PDF</h3><button class="pdf-btn" data-pdf="'+p+'">صفحه اصلی '+manualPageNumber(p)+'</button></section>'
     : '<section><h3>'+manualPageLabel(p)+'</h3><div class="manual-images"><img class="manual-page-image" src="'+image+'" alt="'+manualPageLabel(p)+'" loading="lazy"></div></section>';
   $("#detail").innerHTML='<div class="detail-nav"><button class="home-page-btn" type="button" data-home><i class="bi bi-house-fill"></i><span>خانه</span></button><button class="back" id="backManual">← بازگشت</button></div><div class="detail-head"><div class="eyebrow">'+(fa?"راهنمای فارسی":"راهنمای انگلیسی")+'</div><h2>'+manualPageLabel(p)+'</h2></div>'+body;
   $("#pdfViewer").classList.add("hidden");document.body.classList.remove("modal-open");

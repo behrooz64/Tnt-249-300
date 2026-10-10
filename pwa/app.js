@@ -393,15 +393,38 @@ function search(pushHistory=false){
   if(history.state?.view==="search") replaceViewState({view:"search",q,mode});
   else pushViewState({view:"search",q,mode});
   const terms=q.split(" ").filter(Boolean);
-  if(mode==="repair"||mode==="home"){
-    const r=repairs.map(e=>({...e,score:score(e.title+" "+(e.keywords||[]).join(" ")+" "+(e.steps||[]).join(" "),terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
-    renderRepairResults(r);$("#status").textContent=r.length+" موضوع مرتبط";return;
+  const repairResults=repairs.map(e=>({...e,score:score(e.title+" "+(e.keywords||[]).join(" ")+" "+(e.steps||[]).join(" "),terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
+  let r=manual.map(e=>({...e,score:score((e.title||"")+" "+(e.notes||"")+" "+(e.text||"")+" صفحه "+e.page,terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
+  if(mode==="home"){
+    renderCombinedSearchResults(repairResults,r);
+    $("#status").textContent=(repairResults.length+r.length)+" نتیجه مرتبط";
+    return;
   }
-  let r=manual.map(e=>({...e,score:score((e.notes||"")+" "+(e.text||"")+" صفحه "+e.page,terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
+  if(mode==="repair"){
+    renderRepairResults(repairResults);$("#status").textContent=repairResults.length+" موضوع مرتبط";return;
+  }
   if(mode==="spec")r=r.filter(e=>/مشخصات|spec|torque|pressure|clearance|oil|mm|nm|psi|ولت|آمپر|مقدار/i.test((e.notes||"")+" "+e.text));
   renderManualResults(r);$("#status").textContent=r.length+" صفحه مرتبط";
 }
 function score(h,terms){const x=norm(h);let s=0;terms.forEach(t=>{if(x.includes(t))s+=x.indexOf(t)<120?3:1});return s}
+function manualResultTitle(e){
+  const notes=String(e.notes||"");
+  const heading=notes.match(/^\s*#{1,4}\s+(.+)$/m);
+  if(heading)return heading[1].replace(/[*_#]/g,"").trim();
+  const bold=notes.match(/\*\*([^*]{3,100})\*\*/);
+  if(bold)return bold[1].trim();
+  const line=notes.split("\n").map(x=>x.replace(/[*_#]/g,"").trim()).find(x=>x.length>3);
+  return line||("صفحه "+e.page);
+}
+function renderCombinedSearchResults(topics,pages){
+  const box=$("#results");$("#detail").classList.add("hidden");box.classList.remove("hidden");
+  if(!topics.length&&!pages.length){box.innerHTML='<div class="empty">نتیجه‌ای پیدا نشد. جست‌وجو در متن فارسی، متن انگلیسی و موضوعات تعمیراتی انجام شد.</div>';return}
+  const topicHtml=topics.length?'<section class="search-result-group"><div class="section-title"><h2>موضوعات تعمیراتی</h2><p>برای دیدن مسیر عیب‌یابی، موضوع را انتخاب کن.</p></div>'+topics.slice(0,12).map(e=>'<article class="result-card"><div class="eyebrow">تعمیرات</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).slice(0,5).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div><div class="result-meta">صفحات مرتبط: '+uniquePages(e.pages).map(uiPageNumber).join("، ")+'</div><button class="primary" data-topic="'+esc(e.id)+'">مشاهده موضوع</button></article>').join("")+'</section>':'';
+  const pageHtml=pages.length?'<section class="search-result-group"><div class="section-title"><h2>صفحات دفترچه</h2><p>جست‌وجو در توضیحات فارسی و متن اصلی دفترچه.</p></div>'+pages.slice(0,30).map(e=>'<article class="result-card"><div class="eyebrow">دفترچه</div><h2>'+esc(manualResultTitle(e))+'</h2><p class="result-title">'+manualPageLabel(e.page)+' · '+esc((e.notes||"").replace(/[#*_]/g," ").replace(/\s+/g," ").trim().slice(0,180))+'</p><button class="primary" data-page="'+e.page+'">مشاهده توضیحات</button></article>').join("")+'</section>':'';
+  box.innerHTML=topicHtml+pageHtml;
+  box.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>showRepair(b.dataset.topic));
+  box.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.page,"fa"));
+}
 function renderRepairResults(list){
   const box=$("#results");$("#detail").classList.add("hidden");box.classList.remove("hidden");
   if(!list.length){box.innerHTML='<div class="empty">موضوع مرتبط پیدا نشد.</div>';return}  box.innerHTML='<div class="section-title"><h2>نتایج موضوعی</h2><p>برای دیدن توضیحات، روی موضوع بزن.</p></div>'+list.slice(0,30).map(e=>'<article class="result-card"><div class="eyebrow">موضوع</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).slice(0,5).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div><div class="result-meta">صفحات مرتبط: '+uniquePages(e.pages).map(uiPageNumber).join("، ")+'</div><button class="primary" data-topic="'+esc(e.id)+'">مشاهده توضیحات</button></article>').join("");

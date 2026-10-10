@@ -31,6 +31,7 @@ jobs:
           cp -R pwa/. site/
           cp -R docs site/docs
           cp -R data site/data
+          node scripts/build-seo-pages.js
       - uses: actions/upload-pages-artifact@v4
         with:
           path: site

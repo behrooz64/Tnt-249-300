@@ -46,7 +46,7 @@ for (const url of urls) {
   if (!/<html[^>]*lang=["']fa["']/i.test(html)) fail("Missing Persian html lang: " + url);
   if (title.trim().length < 12) fail("Missing/short title: " + url);
   if (description.trim().length < 50) fail("Missing/short meta description: " + url);
-  if (canonical !== url) fail("Canonical mismatch: " + url + " -> " + canonical);
+  const canonicalUrl = decodeURI(url);\n  if (canonical !== canonicalUrl) fail("Canonical mismatch: " + url + " -> " + canonical);
   if (!/index\s*,\s*follow/i.test(robots)) fail("Page not explicitly indexable: " + url);
   if (!html.includes('type="application/ld+json"')) fail("Missing structured data: " + url);
   if (!/<h1\b/i.test(html)) fail("Missing H1: " + url);

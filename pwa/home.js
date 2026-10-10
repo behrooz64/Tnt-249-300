@@ -1,0 +1,14 @@
+document.addEventListener('DOMContentLoaded',function(){
+  const main=document.querySelector('.app-content .container-fluid');
+  if(!main||document.getElementById('homeLanding'))return;
+  const landing=document.createElement('section');
+  landing.id='homeLanding';
+  landing.innerHTML='<div class="home-hero"><img src="./docs/images/pages/page-0001.png" alt="موتور بنلی"><div><h2>راهنمای Benelli TNT 249</h2><p>دفترچه تعمیراتی دیجیتال</p></div></div><div class="home-choice-grid"><button type="button" data-home-choice="fa"><i class="bi bi-translate"></i><strong>راهنمای فارسی</strong><small>مطالب ترجمه‌شده دفترچه</small></button><button type="button" data-home-choice="en"><i class="bi bi-book"></i><strong>راهنمای انگلیسی</strong><small>صفحات اصلی دفترچه</small></button><button type="button" data-home-choice="repair"><i class="bi bi-wrench-adjustable"></i><strong>راهنمای بخش تعمیرات</strong><small>موضوعات تعمیراتی</small></button></div>';
+  const nav=main.querySelector('.search-navigation');
+  main.insertBefore(landing,nav||main.firstChild);
+  function home(){landing.style.display='block';if(nav)nav.style.display='none';const card=nav&&nav.nextElementSibling;if(card)card.style.display='none';['#status','#results'].forEach(s=>{const x=main.querySelector(s);if(x)x.style.display='none'});document.querySelector('#detail')?.classList.add('hidden');document.querySelector('#pdfViewer')?.classList.add('hidden');if(typeof setPageHeader==='function')setPageHeader('راهنمای تعمیر Benelli TNT 249','خانه');window.scrollTo({top:0,behavior:'smooth'});}
+  function leave(){landing.style.display='none';if(nav)nav.style.display='';const card=nav&&nav.nextElementSibling;if(card)card.style.display='';['#status','#results'].forEach(s=>{const x=main.querySelector(s);if(x)x.style.display=''});}
+  document.addEventListener('click',function(e){const h=e.target.closest('#homeHeader,#brandHome,[data-home],.filters-btn[data-filter="home"]');if(h){e.preventDefault();e.stopImmediatePropagation();history.pushState({tnt249:true,view:'home',mode:'home'},'',location.href);home();return;}const c=e.target.closest('[data-home-choice]');if(c){leave();if(c.dataset.homeChoice==='repair')document.querySelector('.filters button[data-filter="repair"]')?.click();else document.querySelector('.manual-lang-btn[data-manual-lang="'+c.dataset.homeChoice+'"]')?.click();return;}if(e.target.closest('.manual-lang-btn,.filters button:not([data-filter="home"]),[data-topic],[data-page],[data-pdf],[data-manual-page]'))leave();},true);
+  window.addEventListener('popstate',function(e){if(e.state?.view==='home'&&(e.state.mode||'home')==='home')home();else leave()});
+  window.addEventListener('load',function(){if(history.state?.view==='home'&&(history.state.mode||'home')==='home')home()});
+});

@@ -72,6 +72,7 @@ ${body}
 
 const repair = readJson(repairFile, {entries:[]});
 const manual = readJson(manualFile, {pages:[]});
+const manualPagesAvailable = new Set((manual.pages || []).filter(p => (plain(p.notes).length + plain(p.text).length) >= 100).map(p => Number(p.page)));
 const topicsDir = path.join(site, "topics");
 fs.mkdirSync(topicsDir, {recursive:true});
 const sitemap = new Set([base + "/", base + "/topics/"]);
@@ -85,12 +86,12 @@ for (const entry of (repair.entries || [])) {
   const canonical = base + "/topics/" + id + "/";
   const keywords = Array.isArray(entry.keywords) ? entry.keywords : [];
   const steps = Array.isArray(entry.steps) ? entry.steps : [];
-  const pages = Array.isArray(entry.pages) ? [...new Set(entry.pages.map(Number).filter(Number.isFinite))] : [];
+  const pages = Array.isArray(entry.pages) ? [...new Set(entry.pages.map(Number).filter(p => Number.isFinite(p) && manualPagesAvailable.has(p)))] : [];
   const description = `${entry.title}: راهنمای فارسی بررسی، عیب‌یابی و مراجعه به صفحات مرتبط دفترچه تعمیر Benelli TNT 249. ${keywords.join("، ")}`;
   const body = `<p>${esc(entry.title)} یکی از موضوعات راهنمای تعمیراتی Benelli TNT 249 است. این صفحه مسیر بررسی اولیه و ارجاع به صفحات دفترچه را یک‌جا جمع می‌کند.</p>
 ${keywords.length ? `<h2>عبارت‌های مرتبط</h2><p>${esc(keywords.join("، "))}</p>` : ""}
 ${steps.length ? `<h2>مسیر بررسی پیشنهادی</h2><ol>${steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>` : ""}
-${pages.length ? `<h2>صفحات مرتبط دفترچه</h2><ul>${pages.map(p=>`<li><a href="${base}/#manual-page-${p}">صفحه ${p} دفترچه</a></li>`).join("")}</ul><p class="meta">شماره‌ها برای یافتن بخش مرتبط در نسخه دفترچه هستند؛ لینک‌ها ممکن است در برنامه به صفحه داخلی هدایت شوند.</p>` : ""}
+${pages.length ? `<h2>صفحات مرتبط دفترچه</h2><ul>${pages.map(p=>`<li><a href="${base}/manual/page-${p}/">صفحه ${p} دفترچه</a></li>`).join("")}</ul><p class="meta">شماره‌ها برای یافتن بخش مرتبط در نسخه دفترچه هستند؛ لینک‌ها ممکن است در برنامه به صفحه داخلی هدایت شوند.</p>` : ""}
 <p class="notice">هشدار مدل: مرجع اصلی بعضی اطلاعات، دفترچه TNT300 است. مشخصات و مقادیر را پیش از اجرا با نسخه دقیق TNT249 تطبیق دهید.</p>`;
   fs.writeFileSync(path.join(dir, "index.html"), pageTemplate({title:entry.title + " | راهنمای تعمیر Benelli TNT 249", description, canonical, body}));
   sitemap.add(canonical);

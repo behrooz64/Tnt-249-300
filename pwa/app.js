@@ -395,7 +395,7 @@ function search(pushHistory=false){
   const terms=q.split(" ").filter(Boolean);
   const repairResults=repairs.map(e=>({...e,score:score(e.title+" "+(e.keywords||[]).join(" ")+" "+(e.steps||[]).join(" "),terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
   let r=manual.map(e=>({...e,score:score((e.title||"")+" "+(e.notes||"")+" "+(e.text||"")+" صفحه "+e.page,terms)})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
-  if(mode==="home"){
+  if(mode==="home"||mode==="repair"){
     renderCombinedSearchResults(repairResults,r);
     $("#status").textContent=(repairResults.length+r.length)+" نتیجه مرتبط";
     return;

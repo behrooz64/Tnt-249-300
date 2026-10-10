@@ -78,10 +78,12 @@ const SEARCH_ALIASES={
   "فشار تایر":"باد لاستیک","لاستیک کم باد":"باد لاستیک","لقی فرمان":"فرمان","سفتی فرمان":"فرمان","بلبرینگ فرمان":"فرمان",
   "10w 40":"10w40","10 w 40":"10w40","tps سنسور":"tps","ecu خطا":"خطای ecu"
 };
-const aliasEntries=Object.entries(SEARCH_ALIASES).sort((a,b)=>b[0].length-a[0].length);
+const aliasEntries=Object.entries(SEARCH_ALIASES).map(([a,b])=>[norm(a),norm(b)]).sort((a,b)=>b[0].length-a[0].length);
 function canonicalQuery(q){
   let out=norm(q);
-  for(const [alias,canonical] of aliasEntries) out=out.replace(new RegExp("(^|\\\\s)"+alias.replace(/[.*+?^${}()|[\\]\\\\]/g,"\\\\const norm=s=>String(s||"").toLowerCase().replace(/[يى]/g,"ی").replace(/ك/g,"ک").replace(/ۀ/g,"ه").replace(/[\u200c\u200d]/g," ").replace(/[،؛:؟!.,;:()\[\]{}\/\\]/g," ").replace(/\s+/g," ").trim();")+"(?=\\\\s|$)","g"),(m,prefix)=>prefix+canonical);
+  for(const [alias,canonical] of aliasEntries){
+    if(alias) out=out.split(alias).join(canonical);
+  }
   return norm(out);
 }
 const esc=s=>String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));

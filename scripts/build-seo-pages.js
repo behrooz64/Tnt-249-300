@@ -144,10 +144,10 @@ sitemap.add(base + "/manual/");
 fs.writeFileSync(path.join(site, "sitemap.xml"),
   '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-  [...sitemap].sort().map(url => `  <url><loc>${esc(url)}</loc></url>`).join("\n") +
+  [...sitemap].sort().map(url => `  <url><loc>${esc(encodeURI(url))}</loc></url>`).join("\n") +
   '\n</urlset>\n');
 fs.writeFileSync(path.join(site, "sitemap.txt"),
-  [...sitemap].sort().join("\n") + "\n");
+  [...sitemap].sort().map(url => encodeURI(url)).join("\n") + "\n");
 fs.writeFileSync(path.join(site, "robots.txt"),
   'User-agent: *\nAllow: /\nSitemap: ' + base + '/sitemap.xml\n');
 console.log(`SEO build: ${topicLinks.length} topic pages, ${manualLinks.length} manual pages, ${sitemap.size} sitemap URLs`);

@@ -414,6 +414,7 @@ function renderManualResults(list){
   box.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.page));
 }
 function renderHome(mode){
+  if(mode==="home"&&typeof window.showTntLanding==="function"){window.showTntLanding();return}
   if(mode==="repair"||mode==="home"){renderCategories();return}
   if(mode==="manual")renderManualResults(manual.slice(0,60));
   else renderManualResults(manual.filter(e=>/مشخصات|spec|torque|pressure|clearance|oil|mm|nm|psi|ولت|آمپر|مقدار/i.test((e.notes||"")+" "+e.text)).slice(0,60));

@@ -431,13 +431,13 @@ function search(pushHistory=false){
   const terms=searchQ.split(" ").filter(Boolean);
   const repairResults=repairs.map(e=>({...e,score:score(e.title,terms,searchQ,(e.keywords||[]).join(" "),(e.steps||[]).join(" "))})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
   let r=manual.map(e=>({...e,score:score(e.title||"",terms,searchQ,(e.notes||""),(e.text||""))})).filter(e=>e.score).sort((a,b)=>b.score-a.score);
-  if(mode==="repair"){
-    renderRepairResults(repairResults);$("#status").textContent=repairResults.length+" موضوع مرتبط";return;
-  }
-  if(mode==="home"){
+  if(mode==="home"||mode==="repair"){
     renderCombinedSearchResults(repairResults,r);
     $("#status").textContent=(repairResults.length+r.length)+" نتیجه مرتبط";
     return;
+  }
+  if(mode==="repair"){
+    renderRepairResults(repairResults);$("#status").textContent=repairResults.length+" موضوع مرتبط";return;
   }
   if(mode==="spec")r=r.filter(e=>/مشخصات|spec|torque|pressure|clearance|oil|mm|nm|psi|ولت|آمپر|مقدار/i.test((e.notes||"")+" "+e.text));
   renderManualResults(r);$("#status").textContent=r.length+" صفحه مرتبط";

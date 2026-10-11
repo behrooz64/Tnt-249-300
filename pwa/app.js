@@ -467,23 +467,27 @@ function manualResultTitle(e){
 function renderCombinedSearchResults(topics,pages){
   const box=$("#results");$("#detail").classList.add("hidden");box.classList.remove("hidden");
   if(!topics.length&&!pages.length){box.innerHTML='<div class="empty">نتیجه‌ای پیدا نشد. جست‌وجو در متن فارسی، متن انگلیسی و موضوعات تعمیراتی انجام شد.</div>';return}
-  const topicHtml=topics.length?'<section class="search-result-group"><div class="section-title"><h2>موضوعات تعمیراتی</h2><p>برای دیدن مسیر عیب‌یابی، موضوع را انتخاب کن.</p></div>'+topics.slice(0,12).map(e=>'<article class="result-card"><div class="eyebrow">تعمیرات</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).slice(0,5).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div><div class="result-meta">صفحات مرتبط: '+uniquePages(e.pages).map(uiPageNumber).join("، ")+'</div><button class="primary" data-topic="'+esc(e.id)+'">مشاهده موضوع</button></article>').join("")+'</section>':'';
-  const pageHtml=pages.length?'<section class="search-result-group"><div class="section-title"><h2>صفحات دفترچه</h2><p>جست‌وجو در توضیحات فارسی و متن اصلی دفترچه.</p></div>'+pages.slice(0,30).map(e=>'<article class="result-card"><div class="eyebrow">دفترچه</div><h2>'+esc(manualResultTitle(e))+'</h2><p class="result-title">'+manualPageLabel(e.page)+' · '+esc((e.notes||"").replace(/[#*_]/g," ").replace(/\s+/g," ").trim().slice(0,180))+'</p><button class="primary" data-page="'+e.page+'">مشاهده توضیحات</button></article>').join("")+'</section>':'';
+  const topicHtml=topics.length?'<section class="search-result-group"><div class="section-title"><h2>موضوعات تعمیراتی</h2><p>برای دیدن مسیر عیب‌یابی، موضوع را انتخاب کن.</p></div>'+topics.slice(0,12).map(e=>'<article class="result-card"><div class="eyebrow">تعمیرات</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).slice(0,5).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div><div class="result-meta">صفحات مرتبط: '+uniquePages(e.pages).join(", ")+'</div><button class="primary" data-topic="'+esc(e.id)+'">مشاهده موضوع</button></article>').join("")+'</section>':'';
+  const pageHtml=pages.length?'<section class="search-result-group"><div class="section-title"><h2>صفحات دفترچه</h2><p>برای دیدن توضیحات، عنوان یا صفحه را انتخاب کن.</p></div>'+pages.slice(0,30).map(e=>'<article class="result-card"><div class="eyebrow">دفترچه</div><h2>'+esc(manualResultTitle(e))+'</h2><div class="result-meta">'+manualPageLabel(e.page)+'</div><button class="primary" data-page="'+e.page+'">مشاهده توضیحات</button></article>').join("")+'</section>':'';
   box.innerHTML=topicHtml+pageHtml;
   box.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>showRepair(b.dataset.topic));
   box.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.page,"fa"));
 }
+
 function renderRepairResults(list){
   const box=$("#results");$("#detail").classList.add("hidden");box.classList.remove("hidden");
-  if(!list.length){box.innerHTML='<div class="empty">موضوع مرتبط پیدا نشد.</div>';return}  box.innerHTML='<div class="section-title"><h2>نتایج موضوعی</h2><p>برای دیدن توضیحات، روی موضوع بزن.</p></div>'+list.slice(0,30).map(e=>'<article class="result-card"><div class="eyebrow">موضوع</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).slice(0,5).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div><div class="result-meta">صفحات مرتبط: '+uniquePages(e.pages).map(uiPageNumber).join("، ")+'</div><button class="primary" data-topic="'+esc(e.id)+'">مشاهده توضیحات</button></article>').join("");
+  if(!list.length){box.innerHTML='<div class="empty">موضوع مرتبط پیدا نشد.</div>';return}
+  box.innerHTML='<div class="section-title"><h2>نتایج موضوعی</h2><p>برای دیدن توضیحات، روی موضوع بزن.</p></div>'+list.slice(0,30).map(e=>'<article class="result-card"><div class="eyebrow">موضوع</div><h2>'+esc(e.title)+'</h2><div class="tags">'+(e.keywords||[]).slice(0,5).map(x=>'<span>'+esc(x)+'</span>').join("")+'</div><div class="result-meta">صفحات مرتبط: '+uniquePages(e.pages).join(", ")+'</div><button class="primary" data-topic="'+esc(e.id)+'">مشاهده توضیحات</button></article>').join("");
   box.querySelectorAll("[data-topic]").forEach(b=>b.onclick=()=>showRepair(b.dataset.topic));
 }
+
 function renderManualResults(list){
   const box=$("#results");$("#detail").classList.add("hidden");box.classList.remove("hidden");
   if(!list.length){box.innerHTML='<div class="empty">نتیجه‌ای پیدا نشد.</div>';return}
-  box.innerHTML='<div class="section-title"><h2>نتایج صفحات دفترچه</h2><p>ابتدا صفحه را انتخاب کن؛ متن کامل اینجا نمایش داده نمی‌شود.</p></div>'+list.slice(0,60).map(e=>'<article class="result-card"><div class="eyebrow">دفترچه</div><h2>'+manualPageLabel(e.page)+'</h2><p class="result-title">'+esc(e.notes?e.notes.split("\n")[0]:"صفحه دفترچه")+'</p><button class="primary" data-page="'+e.page+'">مشاهده موضوع</button></article>').join("");
+  box.innerHTML='<div class="section-title"><h2>نتایج صفحات دفترچه</h2><p>ابتدا عنوان یا صفحه را انتخاب کن؛ توضیحات پس از کلیک باز می‌شود.</p></div>'+list.slice(0,60).map(e=>'<article class="result-card"><div class="eyebrow">دفترچه</div><h2>'+esc(manualResultTitle(e))+'</h2><div class="result-meta">'+manualPageLabel(e.page)+'</div><button class="primary" data-page="'+e.page+'">مشاهده توضیحات</button></article>').join("");
   box.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>showManualPage(b.dataset.page));
 }
+
 function renderHome(mode){
   if(mode==="home"&&typeof window.showTntLanding==="function"){window.showTntLanding();return}
   if(mode==="repair"||mode==="home"){renderCategories();return}

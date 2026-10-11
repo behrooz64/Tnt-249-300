@@ -1,1 +1,22 @@
-{"name":"راهنمای تعمیر Benelli TNT 249","short_name":"TNT249","start_url":"./index.html","display":"standalone","dir":"rtl","lang":"fa","description":"جست‌وجوی سریع تعمیرات بر پایه دفترچه سرویس","icons":[]}
+{
+  "name": "راهنمای تعمیر Benelli TNT 249",
+  "short_name": "TNT249",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "dir": "rtl",
+  "lang": "fa",
+  "description": "راهنمای فارسی تعمیر و عیب‌یابی Benelli TNT 249؛ دسترسی سریع به دفترچه سرویس و موضوعات تعمیراتی.",
+  "theme_color": "#173d68",
+  "background_color": "#f7f9fc",
+  "icons": [
+    {
+      "src": "icons/tnt249.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
